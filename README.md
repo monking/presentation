@@ -1,18 +1,3 @@
-# Webinar: Creative detailed database structure
+# presentation
 
-## brainstorm
-
-### listing tables
-
-- `tp_video_creatives`
-- `cup_adsets`
-- `cup_versions`
-- `cup_creatives`
-- `adset_requests`
-- [ ] ...etc.
-
-### diagram relationships
-
-## outline
-
-- [ ] outline talk, slides
+Turn a Markdown file into an HTML/JavaScript presentation. Uses `pandoc` for Markdown-HTML conversion.
