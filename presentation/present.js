@@ -36,7 +36,8 @@ class Presentation {
 			slideGroupHiddenClass: 'hidden',
 			slideHiddenClass: 'hidden',
 			contentHiddenClass: 'hidden',
-			fontSize: '40px',
+			fontSize: '29px',
+			debug: false,
 			position: 0,
 			contentPosition: 0
 		};
@@ -44,7 +45,7 @@ class Presentation {
 		this.options = JSON.parse(JSON.stringify(this.defaultOptions)); // defaults by value
 
 		if (options) {
-			this.overrideOptions(options);
+			this.setOptions(options);
 		}
 
 		this.setFontSize(element, this.options.fontSize)
@@ -80,7 +81,7 @@ class Presentation {
 		history.replaceState(stateObject, 'presentation', hash);
 	}
 
-	overrideOptions(options) {
+	setOptions(options) {
 		let overrides = {};
 
 		for (let key in this.options) {
@@ -154,12 +155,12 @@ class Presentation {
 
 		const visibleContentElements = this.toggleAllContentOnSlide(this.slides[index], contentPositionOrVisibility);
 		if (typeof contentPositionOrVisibility === 'boolean') {
-			this.overrideOptions({contentPosition: visibleContentElements});
+			this.setOptions({contentPosition: visibleContentElements});
 		}
 	}
 
 	goToSlide(index, contentVisible = true) {
-		this.overrideOptions({position: index});
+		this.setOptions({position: index});
 		this.showSlideAtIndex(this.slides, this.options.position, contentVisible);
 	}
 
@@ -211,7 +212,7 @@ class Presentation {
 
 	hideLastVisibleElement() {
 		if (this.options.contentPosition > 0) {
-			this.overrideOptions({contentPosition: this.options.contentPosition - 1});
+			this.setOptions({contentPosition: this.options.contentPosition - 1});
 			const currentSlide = this.slides[this.options.position];
 			this.toggleAllContentOnSlide(currentSlide, this.options.contentPosition);
 		}
@@ -221,24 +222,24 @@ class Presentation {
 		const currentSlide = this.slides[this.options.position];
 		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, this.options.contentPosition + 1);
 		if (visibleContentElements !== this.options.contentPosition) {
-			this.overrideOptions({contentPosition: visibleContentElements});
+			this.setOptions({contentPosition: visibleContentElements});
 		}
 	}
 
 	hideAllContent() {
 		const currentSlide = this.slides[this.options.position];
 		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, false);
-		this.overrideOptions({contentPosition: visibleContentElements});
+		this.setOptions({contentPosition: visibleContentElements});
 	}
 
 	showAllContent() {
 		const currentSlide = this.slides[this.options.position];
 		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, true);
-		this.overrideOptions({contentPosition: visibleContentElements});
+		this.setOptions({contentPosition: visibleContentElements});
 	}
 
 	setFontSize(element, fontSize) {
-		this.overrideOptions({fontSize: fontSize});
+		this.setOptions({fontSize: fontSize});
 		element.style.fontSize = this.options.fontSize;
 	}
 
@@ -267,6 +268,7 @@ class Presentation {
 		controls['Shift+ArrowLeft'] = controls.ArrowLeft; // so that one is not punished for holding the shift key
 		controls['Control+Shift+_'] = controls['Control+Shift+-'];
 		controls['Control+Shift+)'] = controls['Control+Shift+0'];
+		controls['Control+Shift+='] = controls['Control+Shift++'];
 
 		element.addEventListener('keydown', event => {
 			let keyTerms = [];
@@ -278,12 +280,14 @@ class Presentation {
 				keyTerms.push(event.key);
 			}
 			const keyDescription = keyTerms.join('+');
-			// console.log(keyDescription);
+			if (this.options.debug) console.log(keyDescription);
 			if (keyDescription in controls) {
 				event.preventDefault();
 				controls[keyDescription](event);
 			}
 		});
+
+		this.controls = controls; // to enable live debugging
 	}
 
 }
@@ -296,11 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		Presentation.getState(window.location.hash)
 	);
 
-  document.body.addEventListener('click', event => {
-    console.log(event);
-    if (event.target.nodeName === 'IMG') {
-      event.preventDefault();
-      window.location.href = event.target.getAttribute('src');
-    }
-  });
+	window.debug = () => {
+		window.presentation.setOptions({debug: !presentation.options.debug});
+	}
 });

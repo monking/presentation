@@ -1,6 +1,6 @@
 html, body {
 	margin: 0;
-	font-size: 40px;
+	font-size: 29px;
   overflow: hidden;
 }
 *, *:before {
@@ -69,8 +69,12 @@ h1 {
 li {
   padding: 0.2em 0;
 }
-img + .caption {
+img + .caption,
+img + figcaption {
   visibility: hidden;
+	height: 0;
+	position: relative;
+	top: -100px;
 }
 img {
   width: auto;
@@ -88,4 +92,11 @@ col {
 }
 td {
   padding: 0.2em;
+}
+.slide > figure > img,
+.slide > .figure > img {
+	display: block;
+	height: 100%;
+	width: auto;
+	margin: 0 auto;
 }
