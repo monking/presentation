@@ -39,5 +39,3 @@ yup
 # Questions
 
 ## Please feel free to ask any questions.
-
-<script src="present.js"></script><!-- this must go at the end -->

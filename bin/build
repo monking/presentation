@@ -1,0 +1,35 @@
+#!/bin/bash
+
+rootDir="$(cd "$(dirname "$0")/.."; pwd)"
+
+srcDir="$rootDir/src/"
+appDir="$srcDir/presentation/"
+appScript="$appDir/presentation.js"
+appStyle="$appDir/presentation.css"
+
+distPath="$rootDir/dist"
+
+cd "$rootDir/src"
+for f in *.md;
+do
+	outputBasename="${f/md/html}"
+	outputPath="$distPath/$outputPath"
+	{
+
+		echo '<head>'
+
+		echo '<meta charset="UTF-8">'
+
+		title="$(grep '^# .\+$' "$f" | head -n1 | perl -pe 's/^# //')"
+		[[ -n $title ]] && echo "<title>${title}</title>"
+
+		echo '<style type="text/css" rel="stylesheet">'"$(cat "$appStyle")"'</style>'
+
+		echo '<script>'"$(cat "$appScript")"'</script>'
+
+		echo '</head>'
+
+		pandoc "$f"
+
+	} > "$outputPath"
+done

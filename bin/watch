@@ -1,0 +1,6 @@
+#!/bin/bash
+cd "$(dirname "$0")"
+while true; do
+	./build
+	sleep 2
+done

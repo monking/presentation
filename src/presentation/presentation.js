@@ -1,11 +1,11 @@
 const helpers = {
-	loadStyle: (url) => {
-		const styleTag = document.createElement('link');
-		styleTag.setAttribute('rel', 'stylesheet');
-		styleTag.setAttribute('href', url);
-		document.head.appendChild(styleTag);
-		return styleTag;
-	},
+	// loadStyle: (url) => {
+	// 	const styleTag = document.createElement('link');
+	// 	styleTag.setAttribute('rel', 'stylesheet');
+	// 	styleTag.setAttribute('href', url);
+	// 	document.head.appendChild(styleTag);
+	// 	return styleTag;
+	// },
   getOffsetFromSlide: (slide, element) => {
     let offset = {
       top: 0,
@@ -200,6 +200,7 @@ class Presentation {
 			const classOperation = visible ? 'remove' : 'add';
 			stepContentElements[i].classList[classOperation](this.options.contentHiddenClass);
 		}
+		if (this.options.debug) console.log(visibleCount);
 
 		let scrollOptions = {
 			left: 0,
@@ -276,6 +277,8 @@ class Presentation {
 		controls['Control+Shift+_'] = controls['Control+Shift+-'];
 		controls['Control+Shift+)'] = controls['Control+Shift+0'];
 		controls['Control+Shift+='] = controls['Control+Shift++'];
+		controls.PageUp = controls.ArrowLeft;
+		controls.PageDown = controls['Shift+ArrowRight'];
 
 		element.addEventListener('keydown', event => {
 			element.classList.add(this.options.hideMouseClass);
@@ -305,7 +308,7 @@ class Presentation {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	helpers.loadStyle('style.css');
+	// helpers.loadStyle('style.css'); // concat'd in build script
 
 	window.presentation = new Presentation(
 		document.body,
