@@ -7,6 +7,9 @@ html, body {
 	transition-duration: 0.3s;
 	transition-property: opacity;
 }
+.hide-mouse {
+	cursor: none;
+}
 .slide.hidden, slide-group.hidden {
 	display: none;
 }

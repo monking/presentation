@@ -23,7 +23,6 @@ const helpers = {
 class Presentation {
 
 	constructor(element, options) {
-
 		this.defaultOptions = {
 			slideGroupSelector: 'h1, .slide-group',
 			slideStartSelector: 'h2, .slide',
@@ -36,6 +35,7 @@ class Presentation {
 			slideGroupHiddenClass: 'hidden',
 			slideHiddenClass: 'hidden',
 			contentHiddenClass: 'hidden',
+			hideMouseClass: 'hide-mouse',
 			fontSize: '29px',
 			debug: false,
 			position: 0,
@@ -125,6 +125,9 @@ class Presentation {
 					parentElement = slideGroup = makeSlideGroup(presentationEl);
 				} else if (childElement.matches(this.options.slideStartSelector)) {
 					parentElement = slide = makeSlide(slideGroup);
+					if (!childElement.innerText) {
+						slide.setAttribute('x-no-header', true);
+					}
 				}
 			}
 
@@ -183,6 +186,10 @@ class Presentation {
 	toggleAllContentOnSlide(slide, contentPositionOrVisibility) {
 		let visibleCount = 0;
 		const stepContentElements = slide.querySelectorAll(this.options.stepContentSelector);
+
+		if (!contentPositionOrVisibility && slide.hasAttribute('x-no-header')) {
+			contentPositionOrVisibility = 1;
+		}
 
 		for (let i = 0; i < stepContentElements.length; i++) {
 			const visible = contentPositionOrVisibility === true || (
@@ -271,6 +278,7 @@ class Presentation {
 		controls['Control+Shift+='] = controls['Control+Shift++'];
 
 		element.addEventListener('keydown', event => {
+			element.classList.add(this.options.hideMouseClass);
 			let keyTerms = [];
 			if (event.metaKey) keyTerms.push('Meta');
 			if (event.ctrlKey) keyTerms.push('Control');
@@ -285,6 +293,10 @@ class Presentation {
 				event.preventDefault();
 				controls[keyDescription](event);
 			}
+		});
+
+		element.addEventListener('mousemove', event => {
+			element.classList.remove(this.options.hideMouseClass);
 		});
 
 		this.controls = controls; // to enable live debugging
