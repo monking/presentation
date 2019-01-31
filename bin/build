@@ -1,35 +1,56 @@
 #!/bin/bash
 
+inplace=false
+while getopts i flag; do
+	case $flag in
+		i) inplace=true;;
+	esac
+done
+[[ $OPTIND -gt 1 ]] && shift $((OPTIND - 1))
+
 rootDir="$(cd "$(dirname "$0")/.."; pwd)"
 
-srcDir="$rootDir/src/"
-appDir="$srcDir/presentation/"
-appScript="$appDir/presentation.js"
-appStyle="$appDir/presentation.css"
+srcDir="$rootDir/src"
+appDir="$srcDir/presentation"
+appScriptPath="$appDir/presentation.js"
+appStylePath="$appDir/presentation.css"
 
 distPath="$rootDir/dist"
 
-cd "$rootDir/src"
-for f in *.md;
-do
-	outputBasename="${f/md/html}"
-	outputPath="$distPath/$outputPath"
+markdownPaths=()
+
+if [[ ${#@} -gt 0 ]]; then
+	markdownPaths=("$@")
+else
+	markdownPaths=("$srcDir/"*.md)
+fi
+
+
+for markdownPath in "${markdownPaths[@]}"; do
+	markdownBasename="$(basename "$markdownPath")"
+	outputBasename="${markdownBasename/.md/.present.html}"
+	if [[ $inplace = true ]]; then
+		outputPath="$(dirname "$markdownPath")/$outputBasename"
+	else
+		outputPath="$distPath/$outputBasename"
+	fi
+
 	{
 
 		echo '<head>'
 
 		echo '<meta charset="UTF-8">'
 
-		title="$(grep '^# .\+$' "$f" | head -n1 | perl -pe 's/^# //')"
+		title="$(grep '^# .\+$' "$markdownPath" | head -n1 | perl -pe 's/^# //')"
 		[[ -n $title ]] && echo "<title>${title}</title>"
 
-		echo '<style type="text/css" rel="stylesheet">'"$(cat "$appStyle")"'</style>'
+		echo '<style type="text/css" rel="stylesheet">'"$(cat "$appStylePath")"'</style>'
 
-		echo '<script>'"$(cat "$appScript")"'</script>'
+		echo '<script>'"$(cat "$appScriptPath")"'</script>'
 
 		echo '</head>'
 
-		pandoc "$f"
+		pandoc "$markdownPath"
 
 	} > "$outputPath"
 done

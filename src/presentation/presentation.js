@@ -17,7 +17,34 @@ const helpers = {
       element = element.offsetParent;
     }
     return offset;
-  }
+  },
+	showModal: (content, parent = null) => {
+		const modal = document.createElement('div');
+		modal.className = 'modal-container';
+
+		const closeButton = document.createElement('div');
+		closeButton.className = 'modal-close';
+		closeButton.addEventListener('click', () => {
+			helpers.hideModal(modal);
+		});
+		modal.appendChild(closeButton);
+
+		const modalContent = document.createElement('div');
+		modalContent.innerHTML = content;
+		modalContent.className = 'modal-content';
+		modal.appendChild(modalContent);
+
+		parent = parent || document.body;
+		parent && parent.appendChild(modal);
+
+		return modal;
+	},
+	hideModal: (element) => {
+		element = element || document.querySelector('.modal-container');
+		if (element && element.parentElement) {
+			element.parentElement.removeChild(element);
+		}
+	}
 };
 
 class Presentation {
@@ -256,8 +283,46 @@ class Presentation {
 		this.setFontSize(element, fontSize);
 	}
 
+	showHelp(element) {
+		// TODO: derive from actual control assignments, by including descriptions when binding.
+		const keyboardShortcuts = [
+			[['?'], 'Show this help'],
+			[['Escape'], 'Close this window.'],
+			[['ArrowUp'], 'hideLastVisibleElement'],
+			[['ArrowDown'], 'showNextHiddenElement'],
+			[['ArrowLeft'], 'previousSlide'],
+			[['ArrowRight'], 'nextSlide: contents hidden'],
+			[['Shift', 'ArrowUp'], 'hideAllContent'],
+			[['Shift', 'ArrowDown'], 'showAllContent'],
+			[['Shift', 'ArrowRight'], 'nextSlide'],
+			[['Control', 'Shift', '+'], 'adjustFontSize +1'],
+			[['Control', 'Shift', '-'], 'adjustFontSize -1'],
+			[['Control', 'Shift', '0'], 'adjustFontSize default'],
+			[['Home'], 'Go to first slide'],
+			[['End'], 'Go to last slide']
+		];
+		let helpMarkup = '<table><thead><tr><td>Key</td><td>Action</td></tr></thead><tbody>';
+		keyboardShortcuts.forEach(binding => {
+			const keyMarkup = binding[0]
+				.map(key => {
+					return `<key>${key}</key>`;
+				})
+				.join(' + ');
+			helpMarkup += `<tr><td>${keyMarkup}</td><td>${binding[1]}</td></tr>`;
+		});
+		helpMarkup += '</tbody></table>';
+		helpers.hideModal();
+		helpers.showModal(helpMarkup, element);
+	}
+
+	hideHelp() {
+		helpers.hideModal();
+	}
+
 	bindControls(element) {
 		let controls = {
+			'?': () => this.showHelp(element),
+			Escape: () => this.hideHelp(),
 			ArrowUp: () => this.hideLastVisibleElement(),
 			ArrowDown: () => this.showNextHiddenElement(),
 			ArrowLeft: () => this.previousSlide(),
@@ -269,7 +334,7 @@ class Presentation {
 			'Control+Shift+-': () => this.adjustFontSize(element, -1),
 			'Control+Shift+0': () => this.setFontSize(element, this.defaultOptions.fontSize),
 			Home: () => this.goToSlide(0, false),
-			End: () => this.goToSlide(this.slides.length - 1)
+			End: () => this.goToSlide(this.slides.length - 1),
 		};
 
 		// aliases
@@ -277,6 +342,7 @@ class Presentation {
 		controls['Control+Shift+_'] = controls['Control+Shift+-'];
 		controls['Control+Shift+)'] = controls['Control+Shift+0'];
 		controls['Control+Shift+='] = controls['Control+Shift++'];
+		controls['Shift+?'] = controls['?'];
 		controls.PageUp = controls.ArrowLeft;
 		controls.PageDown = controls['Shift+ArrowRight'];
 

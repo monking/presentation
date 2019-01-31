@@ -1,6 +1,12 @@
-# presentation
+# Presentation
 
 Turn a Markdown file into an HTML/JavaScript presentation. Uses `pandoc` for Markdown-HTML conversion.
+
+## usage
+
+Run `bin/build [-i] [FILES...]` to generate the presentation once. Optional markdown `FILES` input. Option `-i` will put HTML file next to the input `FILES`. Without this option, the files will be put in the `dist` folder. With no arguments, any `.md` files in the `src` folder will be processed.
+
+Run `bin/watch &` to generate HTML from markdown in the background.
 
 ## script changes considered and not made
 
@@ -15,5 +21,3 @@ I'd also originally made it so that advancing the content to the end of a slide 
 The slides were very effective as a plan and visual aid, letting me confidently say that some early questions could be addressed in a future slide. And being able to zip backward and forward in revealing lists of content allowed me to highlight certain concepts. I also used my mouse a bunch to select text. Unfortunately, my dictionary extension in chrome was kicking in when I'd double-click a word.
 
 - [ ] I should disable it next time.
-
-I presented from my Chromebook, and I believe it worked very well. I'll look at the video later when Rajesh shares it.
