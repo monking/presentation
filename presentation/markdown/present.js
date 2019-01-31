@@ -5,35 +5,6 @@ const helpers = {
     styleTag.setAttribute('href', url);
     document.head.appendChild(styleTag);
     return styleTag;
-  },
-    getHashState: (hash) => {
-    let state = {};
-
-    if (/^#/.test(hash)) {
-      hash = hash.substring(1);
-    }
-
-    if (hash.length > 0) {
-      try {
-        state = JSON.parse(decodeURIComponent(hash));
-      } catch(ignore) {}
-    }
-
-    console.log('state', state);
-
-    return state || {};
-  },
-    goWithState: (url, state) => {
-    const urlWithoutHash = url.replace(/#.*/, ''); // strip any hash from the destination URL
-
-    const hashedState = state ? '#' + encodeURIComponent(JSON.stringify(state)) : '';
-
-    window.location.href = urlWithoutHash + hashedState;
-  },
-    linkWithCurrentState: (anchorElement) => {
-    const url = anchorElement.getAttribute('href');
-    const state = getHashState(window.location.hash);
-    goWithState(url, state);
   }
 };
 
@@ -44,32 +15,38 @@ class Presentation {
     this.element = element;
 
     this.options = {
-      slideGroupSelector: 'h1',
-      slideStartSelector: 'h2',
+      slideGroupSelector: 'h1, .slide-group',
+      slideStartSelector: 'h2, .slide',
+      stepContentSelector: 'h3, h4, h5, h6, li, p, pre',
       slideGroupClass: 'slide-group',
       slideClass: 'slide',
       junkClass: 'junk',
       slideGroupHiddenClass: 'hidden',
       slideHiddenClass: 'hidden',
       contentHiddenClass: 'hidden',
+      fontSize: '40px',
       position: 0
     };
 
     if (options) {
-      for (let key of options) {
-        if (key in this.options) {
-          this.options[key] = options[key];
-        }
-      }
+      this.overrideOptions(options);
     }
 
     this.el = this.parseDom(element);
 
     element.appendChild(this.el);
 
-    this.showSlideAtIndex(this.el, this.options.position);
+    this.showSlideAtIndex(this.el, this.options.position, false);
 
     this.bindControls();
+  }
+
+  overrideOptions(options) {
+    for (let key of options) {
+      if (key in this.options) {
+        this.options[key] = options[key];
+      }
+    }
   }
 
   parseDom(element) {
@@ -91,7 +68,7 @@ class Presentation {
       return newSlide;
     };
 
-    let parentElement = presentationEl;
+    let parentElement = makeSlideGroup(presentationEl);
     let slideGroup, slide;
     while (element.firstChild) {
       const childElement = element.firstChild;
@@ -99,9 +76,6 @@ class Presentation {
         if (childElement.matches(this.options.slideGroupSelector)) {
           parentElement = slideGroup = makeSlideGroup(presentationEl);
         } else if (childElement.matches(this.options.slideStartSelector)) {
-          if (!slideGroup) {
-            slideGroup = makeSlideGroup(presentationEl);
-          }
           parentElement = slide = makeSlide(slideGroup);
         }
       }
@@ -112,7 +86,7 @@ class Presentation {
     return presentationEl;
   }
 
-  showSlideAtIndex(element, index) {
+  showSlideAtIndex(element, index, contentVisible = true) {
     for (let i = 0; i < this.slides.length; i++) {
       if (i !== index) {
         this.slides[i].classList.add(this.options.slideHiddenClass);
@@ -122,30 +96,58 @@ class Presentation {
 
     this.slides[index].classList.remove(this.options.slideHiddenClass);
     this.slides[index].parentElement.classList.remove(this.options.slideGroupHiddenClass);
+
+    this.toggleAllContentOnSlide(this.slides[index], contentVisible);
   }
 
-  previousSlide() {
+  previousSlide(contentVisible = true) {
     if (this.options.position > 0) {
       this.options.position--;
-      this.showSlideAtIndex(this.el, this.options.position);
+      this.showSlideAtIndex(this.el, this.options.position, contentVisible);
     }
-    console.log(this.options.position);
   }
 
-  nextSlide() {
+  nextSlide(contentVisible = true) {
     if (this.options.position < this.slides.length - 1) {
       this.options.position++;
-      this.showSlideAtIndex(this.slides, this.options.position);
+      this.showSlideAtIndex(this.slides, this.options.position, contentVisible);
     }
-    console.log(this.options.position);
+  }
+
+  toggleAllContentOnSlide(slide, visible) {
+    const stepContentElements = slide.querySelectorAll(this.options.stepContentSelector);
+
+    const classOperation = visible ? 'remove' : 'add';
+    for (let i = 0; i < stepContentElements.length; i++) {
+      stepContentElements[i].classList[classOperation](this.options.contentHiddenClass);
+    }
   }
 
   hideLastVisibleElement() {
-    this.previousSlide();
+    const currentSlide = this.slides[this.options.position];
+    const visibleStepContentSelector = this.options.stepContentSelector
+      .replace(/(,|$)/g, ':not(.' + this.options.contentHiddenClass + ')$1');
+    const allVisibleElements = currentSlide.querySelectorAll(visibleStepContentSelector);
+    const lastVisibleElement = allVisibleElements[allVisibleElements.length - 1];
+
+    if (lastVisibleElement) {
+      lastVisibleElement.classList.add(this.options.contentHiddenClass);
+    } else {
+      this.previousSlide();
+    }
   }
 
   showNextHiddenElement() {
-    this.nextSlide();
+    const currentSlide = this.slides[this.options.position];
+    const hiddenStepContentSelector = this.options.stepContentSelector
+      .replace(/(,|$)/g, '.' + this.options.contentHiddenClass + '$1');
+    const nextHiddenElement = currentSlide.querySelector(hiddenStepContentSelector);
+
+    if (nextHiddenElement) {
+      nextHiddenElement.classList.remove(this.options.contentHiddenClass);
+    } else {
+      this.nextSlide(false);
+    }
   }
 
   adjustFontSize(element, direction) {
