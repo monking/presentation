@@ -259,7 +259,7 @@ class Presentation {
 			'Control+Shift++': () => this.adjustFontSize(element, 1),
 			'Control+Shift+-': () => this.adjustFontSize(element, -1),
 			'Control+Shift+0': () => this.setFontSize(element, this.defaultOptions.fontSize),
-			Home: () => this.goToSlide(0),
+			Home: () => this.goToSlide(0, false),
 			End: () => this.goToSlide(this.slides.length - 1)
 		};
 
@@ -295,4 +295,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		document.body,
 		Presentation.getState(window.location.hash)
 	);
+
+  document.body.addEventListener('click', event => {
+    console.log(event);
+    if (event.target.nodeName === 'IMG') {
+      event.preventDefault();
+      window.location.href = event.target.getAttribute('src');
+    }
+  });
 });
