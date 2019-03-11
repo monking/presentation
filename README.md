@@ -8,6 +8,12 @@ Run `bin/build [-i] [FILES...]` to generate the presentation once. Optional mark
 
 Run `bin/watch &` to generate HTML from markdown in the background.
 
+Press `?` on a presentation to see keyboard shortcuts.
+
+---
+
+**Note**: The presentation uses some [ES6](http://www.ecma-international.org/ecma-262/6.0/index.html) features: [classes](http://www.ecma-international.org/ecma-262/6.0/#sec-class-definitions), [arrow functions](http://www.ecma-international.org/ecma-262/6.0/#sec-arrow-function-definitions), [`const`/`let`](http://www.ecma-international.org/ecma-262/6.0/#sec-let-and-const-declarations), [default function parameters](http://www.ecma-international.org/ecma-262/6.0/#sec-functiondeclarationinstantiation), etc. Basically, it [won't run in Internet Explorer](https://kangax.github.io/compat-table/es6/).
+
 ## script changes considered and not made
 
 TL;DR: keyboard control only, for now
