@@ -6,18 +6,18 @@ const helpers = {
 	// 	document.head.appendChild(styleTag);
 	// 	return styleTag;
 	// },
-  getOffsetFromSlide: (slide, element) => {
-    let offset = {
-      top: 0,
-      left: 0
-    };
-    while (element && element !== slide) {
-      offset.top += element.offsetTop;
-      offset.left += element.offsetLeft;
-      element = element.offsetParent;
-    }
-    return offset;
-  },
+	getOffsetFromSlide: (slide, element) => {
+		let offset = {
+			top: 0,
+			left: 0
+		};
+		while (element && element !== slide) {
+			offset.top += element.offsetTop;
+			offset.left += element.offsetLeft;
+			element = element.offsetParent;
+		}
+		return offset;
+	},
 	showModal: (content, parent = null) => {
 		const modal = document.createElement('div');
 		modal.className = 'modal-container';
@@ -81,7 +81,7 @@ class Presentation {
 
 		element.appendChild(presentationElement);
 
-		this.showSlideAtIndex(this.slides, this.options.position, this.options.contentPosition);
+		this.updateSlidePerState();
 
 		this.bindControls(document.body);
 	}
@@ -124,6 +124,10 @@ class Presentation {
 		Presentation.setState(overrides);
 	}
 
+	updateSlidePerState() {
+		this.showSlideAtIndex(this.slides, this.options.position, this.options.contentPosition);
+	}
+
 	parseDom(element) {
 		this.slides = [];
 		let presentationEl = document.createElement('div');
@@ -148,7 +152,7 @@ class Presentation {
 		while (element.firstChild) {
 			const childElement = element.firstChild;
 			if (childElement.nodeType === Node.ELEMENT_NODE && !childElement.matches(this.options.dropElementsSelector)) {
-        if (childElement.matches(this.options.slideGroupSelector)) {
+				if (childElement.matches(this.options.slideGroupSelector)) {
 					parentElement = slideGroup = makeSlideGroup(presentationEl);
 				} else if (childElement.matches(this.options.slideStartSelector)) {
 					parentElement = slide = makeSlide(slideGroup);
@@ -236,7 +240,7 @@ class Presentation {
 		};
 		if (visibleCount > 0) {
 			const bottomElement = stepContentElements[visibleCount - 1];
-      const scrollPadding = parseFloat(this.options.fontSize, 10) * 3;
+			const scrollPadding = parseFloat(this.options.fontSize, 10) * 3;
 			scrollOptions.top = helpers.getOffsetFromSlide(slide, bottomElement).top + bottomElement.offsetHeight - slide.offsetHeight + scrollPadding;
 		}
 		slide.parentElement.classList[visibleCount === stepContentElements.length ? 'add' : 'remove'](this.options.slideGroupFullyVisibleClass);
@@ -367,6 +371,22 @@ class Presentation {
 		element.addEventListener('mousemove', event => {
 			element.classList.remove(this.options.hideMouseClass);
 		});
+
+		const handleInternalLink = event => {
+			event.preventDefault();
+			const newState = Presentation.getState(event.target.getAttribute('href'));
+			if (newState) {
+				this.setOptions(newState);
+				this.updateSlidePerState();
+			}
+		};
+
+		const internalLinks = element.querySelectorAll('a[href^="#"]');
+		if (internalLinks && internalLinks.length > 0) {
+			internalLinks.forEach(link => {
+				link.addEventListener('click', handleInternalLink);
+			});
+		}
 
 		this.controls = controls; // to enable live debugging
 	}
