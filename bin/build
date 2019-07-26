@@ -25,7 +25,6 @@ else
 	markdownPaths=("$srcDir/"*.md)
 fi
 
-
 for markdownPath in "${markdownPaths[@]}"; do
 	markdownBasename="$(basename "$markdownPath")"
 	outputBasename="${markdownBasename/.md/.present.html}"
