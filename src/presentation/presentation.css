@@ -1,3 +1,12 @@
+:root {
+  --header-bg-color: teal;
+  --header-text-color: white;
+  --header-accent-color: skyblue;
+  --content-bg-color: #EEE;
+  --content-text-color: #000;
+  --em-bg-color: white;
+  --em-text-color: darkblue;
+}
 html, body {
 	margin: 0;
 	font-size: 29px;
@@ -17,21 +26,22 @@ html, body {
 	opacity: 0;
 }
 .slide-group h1:before {
-	content: "\00BB";
+	content: "\00BB"; /* double-right chevron */
 	float: right;
 	position: relative;
 	top: -0.1em;
 	opacity: 0;
+	color: var(--header-accent-color);
 }
 .slide-group.fully-visible h1:before {
 	opacity: 0.8;
 }
 .slide-group.fully-visible:last-child h1:before {
-	content: "\2022";
+	content: "\2022"; /* dot */
 	top: 0;
 }
 body {
-	background-color: #EEE;
+	background-color: var(--content-bg-color);
 	font-family: sans-serif;
 	width: 100%;
 	height: 100%;
@@ -47,14 +57,14 @@ body {
   box-sizing: border-box;
 }
 code {
-	color: darkblue;
-	background-color: white;
+	color: var(--em-text-color);;
+	background-color: var(--em-bg-color);
 }
 pre code {
 	display: block;
 	margin: 1em;
 	padding: 0.2em;
-	background-color: white;
+	background-color: var(--em-bg-color);
 	border: 1px solid rgba(0,0,0,0.2);
 	overflow-x: auto;
 }
@@ -65,8 +75,8 @@ h1 {
 	top: 0;
 	left: 0;
 	right: 0;
-	background-color: #ef7439;
-	color: white;
+	background-color: var(--header-bg-color);
+	color: var(--header-text-color);
 	font-size: 1.5em;
 	padding: 0.5em;
 }
@@ -110,7 +120,7 @@ td {
 	left: 5%;
 	width: 90%;
 	height: 90%;
-	background-color: #EEE;
+	background-color: var(--content-bg-color);
 	box-shadow: 0 0.5em 2em rgba(0,0,0,0.5);
 	z-index: 1;
 	box-sizing: border-box;
@@ -136,11 +146,12 @@ td {
 .modal-content > table td:first-child {
 	text-align: right;
 }
-key {
+key { /* as in keyboard key, styled to look like a button */
 	display: inline-block;
-	border: 1px solid rgba(0,0,0,0.5);
-	background-color: rgba(255,255,255,0.5);
-	padding: 0.2em;
+	border: 1px solid var(--em-text-color);
+	background-color: var(--em-bg-color);
+	color: var(--em-text-color);
+	padding: 0.3em;
 	border-radius: 0.25em;
 	font-size: 0.7em;
 	vertical-align: middle;

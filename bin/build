@@ -3,10 +3,62 @@
 showHelp() {
 	echo "Turn a markdown file into an interactive HTML presentation." >&2
 	echo "OPTIONS" >&2
-	echo " -d  Output the presentation HTML file in the current directory." >&2
-	echo "     Without this option, the HTML file is placed in the same directory as th" >&2e
-	echo "     source markdown file." >&2
-	echo " -h  Show this help" >&2
+	echo " -c FILE  Specify a custom CSS file to load after the default." >&2
+	echo "          You may load multiple stylesheets by passing -c multiple times" >&2
+	echo "          See CUSTOM CSS PROPERTIES toapply a color scheme." >&2
+	echo "" >&2
+	echo " -j FILE  Specify a custom JavaScript file, to be executed after" >&2
+	echo "          the presentation has initialized. You may load multiple" >&2
+	echo "          scripts by passing -j multiple times" >&2
+	echo "" >&2
+	echo "          Note: scripts are concatenated within one <script> tag," >&2
+	echo "          which may cause problems if a script begins with a '('," >&2
+	echo "          or doesn't end with a ';' when it should." >&2
+	echo "" >&2
+	echo " -d       Output the presentation HTML file in the current directory." >&2
+	echo "          Without this option, the HTML file is placed in the same" >&2e
+	echo "          directory as teh source markdown file." >&2
+	echo "" >&2
+	echo " -h       Show this help." >&2
+	echo "" >&2
+	echo " -w       Watch for changes in the provided files, and rebuild.*" >&2
+	echo "" >&2
+	echo "DEPENDENCIES" >&2
+	echo "" >&2
+	echo " pandoc (https://pandoc.org/) is used to turn the markdown file into an HTML file." >&2
+	echo "" >&2
+	echo "CUSTOM CSS PROPERTIES" >&2
+	echo "" >&2
+	echo " The default stylesheet contains this rule:" >&2
+	echo "" >&2
+	echo " :root {" >&2
+	echo "   --header-bg-color: teal;" >&2
+	echo "   --header-text-color: white;" >&2
+	echo "   --header-accent-color: skyblue;" >&2
+	echo "   --content-bg-color: #EEE;" >&2
+	echo "   --content-text-color: #000;" >&2
+	echo "   --em-bg-color: white;" >&2
+	echo "   --em-text-color: darkblue;" >&2
+	echo " }" >&2
+	echo "" >&2
+	echo " If you copy this to your custom stylesheet and specify different" >&2
+	echo " colors, then they will be applied when you build with -c YOURCSS." >&2
+	echo "" >&2
+	echo "BROWSER COMPATIBILITY" >&2
+	echo "" >&2
+	echo " Basically anything escept Internet Explorer is supported." >&2
+	echo "" >&2
+	echo " The JavaScript driving the presentation uses class and constants, and so" >&2
+	echo " requires a browser which supports ECMAScript 2015." >&2
+	echo " https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes#Browser_compatibility" >&2
+	echo "" >&2
+	echo " Custom CSS properties are also used." >&2
+	echo " https://developer.mozilla.org/en-US/docs/Web/CSS/--*#Browser_compatibility" >&2
+	echo "" >&2
+	echo "---" >&2
+	echo "" >&2
+	echo "* Actually, -w causes this script to rebuild the output every 2 seconds," >&2
+	echo "  regardless of whether files have changed." >&2
 }
 
 canon() {
@@ -40,27 +92,29 @@ canon() {
 	done
 }
 
-inplace=true
-while getopts dh flag; do
-	case $flag in
-		d) inplace=false;;
-		h) showHelp; exit 0;;
-	esac
-done
-[[ $OPTIND -gt 1 ]] && shift $((OPTIND - 1))
-
 scriptPath="$(canon "$0")"
 
 rootDir="$(cd "$(dirname "$scriptPath")/.."; pwd)"
 
 srcDir="$rootDir/src"
 appDir="$srcDir/presentation"
-appScriptPath="$appDir/presentation.js"
-appStylePath="$appDir/presentation.css"
-
-# file "$appScriptPath"; exit 1; # XXX
+appScriptPaths=("$appDir/presentation.js")
+appStylePaths=("$appDir/presentation.css")
 
 distPath="$rootDir/dist"
+inplace=true
+shouldWatch=false
+
+while getopts c:dj:hw flag; do
+	case $flag in
+		c) appStylePaths+=("$OPTARG");;
+		d) inplace=false;;
+		j) appScriptPaths+=("$OPTARG");;
+		h) showHelp; exit 0;;
+		w) shouldWatch=true;;
+	esac
+done
+[[ $OPTIND -gt 1 ]] && shift $((OPTIND - 1))
 
 markdownPaths=()
 
@@ -70,31 +124,42 @@ else
 	markdownPaths=("$srcDir/"*.md)
 fi
 
-for markdownPath in "${markdownPaths[@]}"; do
-	markdownBasename="$(basename "$markdownPath")"
-	outputBasename="${markdownBasename/.md/.present.html}"
-	if [[ $inplace = true ]]; then
-		outputPath="$(dirname "$markdownPath")/$outputBasename"
-	else
-		outputPath="$PWD/$outputBasename"
-	fi
+compile() {
+	local markdownPath
+	for markdownPath in "${markdownPaths[@]}"; do
+		local markdownBasename="$(basename "$markdownPath")"
+		local outputBasename="${markdownBasename/.md/.present.html}"
+		local outputPath
 
-	{
+		if [[ $inplace = true ]]; then
+			outputPath="$(dirname "$markdownPath")/$outputBasename"
+		else
+			outputPath="$PWD/$outputBasename"
+		fi
 
-		echo '<head>'
+		{
 
-		echo '<meta charset="UTF-8">'
+			echo '<head>'
 
-		title="$(grep '^# .\+$' "$markdownPath" | head -n1 | perl -pe 's/^# //')"
-		[[ -n $title ]] && echo "<title>${title}</title>"
+			echo '<meta charset="UTF-8">'
 
-		echo '<style type="text/css" rel="stylesheet">'"$(cat "$appStylePath")"'</style>'
+			local title="$(grep '^# .\+$' "$markdownPath" | head -n1 | perl -pe 's/^# //')"
+			[[ -n $title ]] && echo "<title>${title}</title>"
 
-		echo '<script>'"$(cat "$appScriptPath")"'</script>'
+			echo '<style type="text/css" rel="stylesheet">'"$(cat "${appStylePaths[@]}")"'</style>'
 
-		echo '</head>'
+			echo '<script>'"$(cat "${appScriptPaths[@]}")"'</script>'
 
-		pandoc "$markdownPath"
+			echo '</head>'
 
-	} > "$outputPath"
-done
+			pandoc "$markdownPath"
+
+		} > "$outputPath"
+	done
+}
+
+if [[ $shouldWatch = true ]]; then
+	while true; do compile; sleep 2; done # TODO: actually watch for changes, maybe md5sum
+else
+	compile
+fi
