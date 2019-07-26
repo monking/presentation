@@ -1,19 +1,64 @@
 #!/bin/bash
 
-inplace=false
-while getopts i flag; do
+showHelp() {
+	echo "Turn a markdown file into an interactive HTML presentation." >&2
+	echo "OPTIONS" >&2
+	echo " -d  Output the presentation HTML file in the current directory." >&2
+	echo "     Without this option, the HTML file is placed in the same directory as th" >&2e
+	echo "     source markdown file." >&2
+	echo " -h  Show this help" >&2
+}
+
+canon() {
+	## find the full path of a file or directory, following all symlinks
+	local cwd="$PWD"
+	for targetFile in "$@"; do
+		cd "$cwd"
+		cd "$(dirname "$targetFile")"
+		local targetFile="$(basename "$targetFile")"
+
+		# Iterate down a (possible) chain of symlinks
+		while [ -L "$targetFile" ]
+		do
+			targetFile="$(readlink "$targetFile")"
+			cd "$(dirname "$targetFile")"
+			targetFile="$(basename "$targetFile")"
+		done
+
+		# Compute the canonicalized name by finding the physical path
+		# for the directory we're in and appending the target file.
+		local physDir="$(pwd -P)"
+		local result=$physDir/
+		if [ ! "$targetFile" = "." ]; then
+			result="$result$targetFile"
+		fi
+		if [ -t 1 ]; then
+			echo "$result"
+		else
+			printf "$result"
+		fi
+	done
+}
+
+inplace=true
+while getopts dh flag; do
 	case $flag in
-		i) inplace=true;;
+		d) inplace=false;;
+		h) showHelp; exit 0;;
 	esac
 done
 [[ $OPTIND -gt 1 ]] && shift $((OPTIND - 1))
 
-rootDir="$(cd "$(dirname "$0")/.."; pwd)"
+scriptPath="$(canon "$0")"
+
+rootDir="$(cd "$(dirname "$scriptPath")/.."; pwd)"
 
 srcDir="$rootDir/src"
 appDir="$srcDir/presentation"
 appScriptPath="$appDir/presentation.js"
 appStylePath="$appDir/presentation.css"
+
+# file "$appScriptPath"; exit 1; # XXX
 
 distPath="$rootDir/dist"
 
@@ -31,7 +76,7 @@ for markdownPath in "${markdownPaths[@]}"; do
 	if [[ $inplace = true ]]; then
 		outputPath="$(dirname "$markdownPath")/$outputBasename"
 	else
-		outputPath="$distPath/$outputBasename"
+		outputPath="$PWD/$outputBasename"
 	fi
 
 	{
