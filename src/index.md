@@ -1,6 +1,6 @@
 # My Presentation
 
-## Overview
+## Overview (arrow keys to advance)
 
 ([jump to source](#%7B"position"%3A6%2C"contentPosition"%3A1%7D))
 
@@ -48,7 +48,7 @@ yup
 
 	# My Presentation
 
-	## Overview
+	## Overview (arrow keys to advance)
 
 	1. First topic:
 	2. I'm just trying
