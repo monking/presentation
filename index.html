@@ -1,7 +1,16 @@
 <head>
 <meta charset="UTF-8">
 <title>My Presentation</title>
-<style type="text/css" rel="stylesheet">html, body {
+<style type="text/css" rel="stylesheet">:root {
+  --header-bg-color: teal;
+  --header-text-color: white;
+  --header-accent-color: skyblue;
+  --content-bg-color: #EEE;
+  --content-text-color: #000;
+  --em-bg-color: white;
+  --em-text-color: darkblue;
+}
+html, body {
 	margin: 0;
 	font-size: 29px;
   overflow: hidden;
@@ -20,21 +29,22 @@
 	opacity: 0;
 }
 .slide-group h1:before {
-	content: "\00BB";
+	content: "\00BB"; /* double-right chevron */
 	float: right;
 	position: relative;
 	top: -0.1em;
 	opacity: 0;
+	color: var(--header-accent-color);
 }
 .slide-group.fully-visible h1:before {
 	opacity: 0.8;
 }
 .slide-group.fully-visible:last-child h1:before {
-	content: "\2022";
+	content: "\2022"; /* dot */
 	top: 0;
 }
 body {
-	background-color: #EEE;
+	background-color: var(--content-bg-color);
 	font-family: sans-serif;
 	width: 100%;
 	height: 100%;
@@ -50,15 +60,16 @@ body {
   box-sizing: border-box;
 }
 code {
-	color: darkblue;
-	background-color: white;
+	color: var(--em-text-color);;
+	background-color: var(--em-bg-color);
 }
 pre code {
 	display: block;
 	margin: 1em;
 	padding: 0.2em;
-	background-color: white;
+	background-color: var(--em-bg-color);
 	border: 1px solid rgba(0,0,0,0.2);
+	overflow-x: auto;
 }
 h1 {
   z-index: 1;
@@ -67,8 +78,8 @@ h1 {
 	top: 0;
 	left: 0;
 	right: 0;
-	background-color: #ef7439;
-	color: white;
+	background-color: var(--header-bg-color);
+	color: var(--header-text-color);
 	font-size: 1.5em;
 	padding: 0.5em;
 }
@@ -112,7 +123,7 @@ td {
 	left: 5%;
 	width: 90%;
 	height: 90%;
-	background-color: #EEE;
+	background-color: var(--content-bg-color);
 	box-shadow: 0 0.5em 2em rgba(0,0,0,0.5);
 	z-index: 1;
 	box-sizing: border-box;
@@ -138,11 +149,12 @@ td {
 .modal-content > table td:first-child {
 	text-align: right;
 }
-key {
+key { /* as in keyboard key, styled to look like a button */
 	display: inline-block;
-	border: 1px solid rgba(0,0,0,0.5);
-	background-color: rgba(255,255,255,0.5);
-	padding: 0.2em;
+	border: 1px solid var(--em-text-color);
+	background-color: var(--em-bg-color);
+	color: var(--em-text-color);
+	padding: 0.3em;
 	border-radius: 0.25em;
 	font-size: 0.7em;
 	vertical-align: middle;
@@ -557,11 +569,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });</script>
 </head>
 <h1 id="my-presentation">My Presentation</h1>
-<h2 id="overview">Overview</h2>
+<h2 id="overview-arrow-keys-to-advance">Overview (arrow keys to advance)</h2>
 <p>(<a href="#%7B%22position%22%3A6%2C%22contentPosition%22%3A1%7D">jump to source</a>)</p>
-<ol type="1">
+<ol style="list-style-type: decimal">
 <li>First topic:</li>
-<li>I’m just trying</li>
+<li>I'm just trying</li>
 <li>To make a point
 <ul>
 <li>here</li>
@@ -574,11 +586,11 @@ document.addEventListener('DOMContentLoaded', () => {
 </ol>
 <h1 id="topic-1">Topic 1</h1>
 <h2 id="slide-1">Slide 1</h2>
-<p>Here’s a paragraph of some text. <code>Here's a bit of code inside the paragraph;</code> Here’s a paragraph of some text. Here’s a paragraph of some text. Here’s a paragraph of some text. Here’s a paragraph of some text. Here’s a paragraph of some text.</p>
+<p>Here's a paragraph of some text. <code>Here's a bit of code inside the paragraph;</code> Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text.</p>
 <pre><code>testing code</code></pre>
-<p>Here’s a paragraph of some text. Here’s a paragraph of some text. Here’s a paragraph of some text. Here’s a paragraph of some text. Here’s a paragraph of some text. Here’s a paragraph of some text.</p>
-<h1 id="heres-this-whole-other-section">Here’s this whole other section</h1>
-<p>with some stuff in the header that’s not in the slide</p>
+<p>Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text.</p>
+<h1 id="heres-this-whole-other-section">Here's this whole other section</h1>
+<p>with some stuff in the header that's not in the slide</p>
 <h2 id="and-another-slidie">and another slidie</h2>
 <p>Slides!</p>
 <p>Yay</p>
@@ -591,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <h2 id="markdown">Markdown</h2>
 <pre><code># My Presentation
 
-## Overview
+## Overview (arrow keys to advance)
 
 1. First topic:
 2. I&#39;m just trying
