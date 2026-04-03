@@ -1,648 +1,974 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
 <head>
-<meta charset="UTF-8">
-<title>My Presentation</title>
-<style type="text/css" rel="stylesheet">:root {
-  --header-bg-color: teal;
-  --header-text-color: white;
-  --header-accent-color: skyblue;
-  --content-bg-color: #EEE;
-  --content-text-color: #000;
-  --em-bg-color: white;
-  --em-text-color: darkblue;
-}
-html, body {
-	margin: 0;
-	font-size: 29px;
-  overflow: hidden;
-}
-*, *:before {
-	transition-duration: 0.3s;
-	transition-property: opacity;
-}
-.hide-mouse {
-	cursor: none;
-}
-.slide.hidden, slide-group.hidden {
-	display: none;
-}
-.hidden {
-	opacity: 0;
-}
-.slide-group h1:before {
-	content: "\00BB"; /* double-right chevron */
-	float: right;
-	position: relative;
-	top: -0.1em;
-	opacity: 0;
-	color: var(--header-accent-color);
-}
-.slide-group.fully-visible h1:before {
-	opacity: 0.8;
-}
-.slide-group.fully-visible:last-child h1:before {
-	content: "\2022"; /* dot */
-	top: 0;
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Demo Presentation</title>
+  <style>
+html {
+color: #1a1a1a;
+background-color: #fdfdfd;
 }
 body {
-	background-color: var(--content-bg-color);
-	font-family: sans-serif;
-	width: 100%;
-	height: 100%;
-	position: relative;
-	box-sizing: border-box;
+margin: 0 auto;
+max-width: 36em;
+padding-left: 50px;
+padding-right: 50px;
+padding-top: 50px;
+padding-bottom: 50px;
+hyphens: auto;
+overflow-wrap: break-word;
+text-rendering: optimizeLegibility;
+font-kerning: normal;
 }
-.slide {
-	width: 100%;
-	height: 100%;
-	position: fixed;
-	overflow: auto;
-	padding: 4em 5% 3em;
-  box-sizing: border-box;
-}
-code {
-	color: var(--em-text-color);;
-	background-color: var(--em-bg-color);
-}
-pre code {
-	display: block;
-	margin: 1em;
-	padding: 0.2em;
-	background-color: var(--em-bg-color);
-	border: 1px solid rgba(0,0,0,0.2);
-	overflow-x: auto;
+@media (max-width: 600px) {
+body {
+font-size: 0.9em;
+padding: 12px;
 }
 h1 {
-  z-index: 1;
-	margin: 0;
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	background-color: var(--header-bg-color);
-	color: var(--header-text-color);
-	font-size: 1.5em;
-	padding: 0.5em;
+font-size: 1.8em;
+}
+}
+@media print {
+html {
+background-color: white;
+}
+body {
+background-color: transparent;
+color: black;
+font-size: 12pt;
+}
+p, h2, h3 {
+orphans: 3;
+widows: 3;
+}
+h2, h3, h4 {
+page-break-after: avoid;
+}
+}
+p {
+margin: 1em 0;
+}
+a {
+color: #1a1a1a;
+}
+a:visited {
+color: #1a1a1a;
+}
+img {
+max-width: 100%;
+}
+h1, h2, h3, h4, h5, h6 {
+margin-top: 1.4em;
+}
+h5, h6 {
+font-size: 1em;
+font-style: italic;
+}
+h6 {
+font-weight: normal;
+}
+ol, ul {
+padding-left: 1.7em;
+margin-top: 1em;
+}
+li > ol, li > ul {
+margin-top: 0;
+}
+blockquote {
+margin: 1em 0 1em 1.7em;
+padding-left: 1em;
+border-left: 2px solid #e6e6e6;
+color: #606060;
+}
+code {
+font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+font-size: 85%;
+margin: 0;
+hyphens: manual;
+}
+pre {
+margin: 1em 0;
+overflow: auto;
+}
+pre code {
+padding: 0;
+overflow: visible;
+overflow-wrap: normal;
+}
+.sourceCode {
+background-color: transparent;
+overflow: visible;
+}
+hr {
+background-color: #1a1a1a;
+border: none;
+height: 1px;
+margin: 1em 0;
+}
+table {
+margin: 1em 0;
+border-collapse: collapse;
+width: 100%;
+overflow-x: auto;
+display: block;
+font-variant-numeric: lining-nums tabular-nums;
+}
+table caption {
+margin-bottom: 0.75em;
+}
+tbody {
+margin-top: 0.5em;
+border-top: 1px solid #1a1a1a;
+border-bottom: 1px solid #1a1a1a;
+}
+th {
+border-top: 1px solid #1a1a1a;
+padding: 0.25em 0.5em 0.25em 0.5em;
+}
+td {
+padding: 0.125em 0.5em 0.25em 0.5em;
+}
+header {
+margin-bottom: 4em;
+text-align: center;
+}
+#TOC li {
+list-style: none;
+}
+#TOC ul {
+padding-left: 1.3em;
+}
+#TOC > ul {
+padding-left: 0;
+}
+#TOC a:not(:hover) {
+text-decoration: none;
+}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css" rel="stylesheet">:root {
+--header-bg-color: teal;
+--header-text-color: white;
+--header-accent-color: skyblue;
+--content-bg-color: #EEE;
+--content-text-color: #000;
+--em-bg-color: white;
+--em-text-color: darkblue;
+}
+html, body {
+margin: 0;
+padding: 0;
+font-size: 29px;
+overflow: hidden;
+}
+*, *:before {
+transition-duration: 0.3s;
+transition-property: opacity;
+}
+.hide-mouse {
+cursor: none;
+}
+.slide.hidden, slide-group.hidden {
+display: none;
+}
+.hidden {
+opacity: 0;
+}
+.slide-group h1:before {
+content: "\00BB"; 
+float: right;
+position: relative;
+top: -0.1em;
+opacity: 0;
+color: var(--header-accent-color);
+}
+.slide-group:last-child h1:before {
+content: "\2022"; 
+top: 0;
+}
+.slide-group.fully-visible h1:before {
+opacity: 0.8;
+}
+body {
+background-color: var(--content-bg-color);
+font-family: sans-serif;
+width: 100%;
+height: 100%;
+position: relative;
+box-sizing: border-box;
+}
+.slide {
+width: 100%;
+height: 100%;
+position: fixed;
+overflow: auto;
+padding: 4em 5% 3em;
+box-sizing: border-box;
+}
+code {
+color: var(--em-text-color);;
+background-color: var(--em-bg-color);
+}
+pre code {
+display: block;
+margin: 1em;
+padding: 0.2em;
+background-color: var(--em-bg-color);
+border: 1px solid rgba(0,0,0,0.2);
+overflow-x: auto;
+max-height: 50vh;
+max-width: 80vw;
+}
+#title-block-header {
+
+display: none;
+}
+h1 {
+z-index: 1;
+margin: 0;
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+background-color: var(--header-bg-color);
+color: var(--header-text-color);
+font-size: 1.5em;
+padding: 0.5em;
+}
+h2 {
+margin: 0;
 }
 li {
-  padding: 0.2em 0;
+padding: 0.2em 0;
 }
 img + .caption,
 img + figcaption {
-  visibility: hidden;
-	height: 0;
-	position: relative;
-	top: -100px;
+visibility: hidden;
+height: 0;
+position: relative;
+top: -100px;
 }
 img {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
+width: auto;
+height: auto;
+max-width: 100%;
+max-height: 100%;
 }
-
 table {
-  font-size: inherit;
-  width: 100% !important; /* [style="width:6%"] is resulting from pandoc, for some reason */
+font-size: inherit;
+width: 100% !important; 
 }
 col {
-  width: auto !important; /* overriding colgroup > col[style="width:2%"] */
+width: auto !important; 
 }
 td {
-  padding: 0.2em;
+padding: 0.2em;
 }
 .slide > figure > img,
 .slide > .figure > img {
-	display: block;
-	height: 100%;
-	width: auto;
-	margin: 0 auto;
+display: block;
+height: 100%;
+width: auto;
+margin: 0 auto;
 }
 .modal-container {
-	position: fixed;
-	top: 5%;
-	left: 5%;
-	width: 90%;
-	height: 90%;
-	background-color: var(--content-bg-color);
-	box-shadow: 0 0.5em 2em rgba(0,0,0,0.5);
-	z-index: 1;
-	box-sizing: border-box;
-	padding: 1em;
+position: fixed;
+top: 5%;
+left: 5%;
+width: 90%;
+height: 90%;
+background-color: var(--content-bg-color);
+box-shadow: 0 0.5em 2em rgba(0,0,0,0.5);
+z-index: 1;
+box-sizing: border-box;
+padding: 1em;
 }
 .modal-close {
-	position: absolute;
-	top: 0.5em;
-	right: 0.5em;
+position: absolute;
+top: 0.5em;
+right: 0.5em;
+cursor: pointer;
 }
 .modal-close:after {
-	content: "X";
+content: "✕";
 }
 .modal-content {
-	width: 100%;
-	height: 100%;
-	overflow: auto;
+width: 100%;
+height: 100%;
+overflow: auto;
 }
 .modal-content > table thead td {
-	font-weight: bold;
-	border-bottom: 1px solid black;
+font-weight: bold;
+text-align: center;
 }
-.modal-content > table td:first-child {
-	text-align: right;
+.modal-content > table tbody td:first-child {
+text-align: right;
 }
-key { /* as in keyboard key, styled to look like a button */
-	display: inline-block;
-	border: 1px solid var(--em-text-color);
-	background-color: var(--em-bg-color);
-	color: var(--em-text-color);
-	padding: 0.3em;
-	border-radius: 0.25em;
-	font-size: 0.7em;
-	vertical-align: middle;
-	box-shadow: 0 0.2em 0.3em 0em rgba(0,0,0,0.3);
+key { 
+display: inline-block;
+border: 1px solid var(--em-text-color);
+background-color: var(--em-bg-color);
+color: var(--em-text-color);
+padding: 0.1em 0.5em;
+border-radius: 0.25em;
+font-size: 0.7em;
+vertical-align: middle;
+box-shadow: 0 0.2em 0.3em 0em rgba(0,0,0,0.3);
 }</style>
-<script>const helpers = {
-	// loadStyle: (url) => {
-	// 	const styleTag = document.createElement('link');
-	// 	styleTag.setAttribute('rel', 'stylesheet');
-	// 	styleTag.setAttribute('href', url);
-	// 	document.head.appendChild(styleTag);
-	// 	return styleTag;
-	// },
-	getOffsetFromSlide: (slide, element) => {
-		let offset = {
-			top: 0,
-			left: 0
-		};
-		while (element && element !== slide) {
-			offset.top += element.offsetTop;
-			offset.left += element.offsetLeft;
-			element = element.offsetParent;
-		}
-		return offset;
-	},
-	showModal: (content, parent = null) => {
-		const modal = document.createElement('div');
-		modal.className = 'modal-container';
+  <script>const helpers = {
+  	// loadStyle: (url) => {
+  	// 	const styleTag = document.createElement('link');
+  	// 	styleTag.setAttribute('rel', 'stylesheet');
+  	// 	styleTag.setAttribute('href', url);
+  	// 	document.head.appendChild(styleTag);
+  	// 	return styleTag;
+  	// },
+  	getOffsetFromSlide: (slide, element) => {
+  		let offset = {
+  			top: 0,
+  			left: 0
+  		};
+  		while (element && element !== slide) {
+  			offset.top += element.offsetTop;
+  			offset.left += element.offsetLeft;
+  			element = element.offsetParent;
+  		}
+  		return offset;
+  	},
+  	showModal: (content, parent = null) => {
+  		const modal = document.createElement('div');
+  		modal.className = 'modal-container';
 
-		const closeButton = document.createElement('div');
-		closeButton.className = 'modal-close';
-		closeButton.addEventListener('click', () => {
-			helpers.hideModal(modal);
-		});
-		modal.appendChild(closeButton);
+  		const closeButton = document.createElement('div');
+  		closeButton.className = 'modal-close';
+  		closeButton.addEventListener('click', () => {
+  			helpers.hideModal(modal);
+  		});
+  		modal.appendChild(closeButton);
 
-		const modalContent = document.createElement('div');
-		modalContent.innerHTML = content;
-		modalContent.className = 'modal-content';
-		modal.appendChild(modalContent);
+  		const modalContent = document.createElement('div');
+  		modalContent.innerHTML = content;
+  		modalContent.className = 'modal-content';
+  		modal.appendChild(modalContent);
 
-		parent = parent || document.body;
-		parent && parent.appendChild(modal);
+  		parent = parent || document.body;
+  		parent && parent.appendChild(modal);
 
-		return modal;
-	},
-	hideModal: (element) => {
-		element = element || document.querySelector('.modal-container');
-		if (element && element.parentElement) {
-			element.parentElement.removeChild(element);
-		}
-	}
-};
+  		return modal;
+  	},
+  	hideModal: (element) => {
+  		element = element || document.querySelector('.modal-container');
+  		if (element && element.parentElement) {
+  			element.parentElement.removeChild(element);
+  		}
+  	}
+  };
 
-class Presentation {
+  class Presentation {
 
-	constructor(element, options) {
-		this.defaultOptions = {
-			slideGroupSelector: 'h1, .slide-group',
-			slideStartSelector: 'h2, .slide',
-			stepContentSelector: 'h3, h4, h5, h6, li, p, pre, img, tr',
-			dropElementsSelector: 'p.caption',
-			slideGroupClass: 'slide-group',
-			slideGroupFullyVisibleClass: 'fully-visible',
-			slideClass: 'slide',
-			junkClass: 'junk',
-			slideGroupHiddenClass: 'hidden',
-			slideHiddenClass: 'hidden',
-			contentHiddenClass: 'hidden',
-			hideMouseClass: 'hide-mouse',
-			fontSize: '29px',
-			debug: false,
-			position: 0,
-			contentPosition: 0
-		};
+  	constructor(element, optionsOrHash) {
+  		this.defaultOptions = {
+  			slideGroupSelector: 'h1, .slide-group',
+  			slideStartSelector: 'h2, .slide',
+  			stepContentSelector: 'h3, h4, h5, h6, li, p, pre, img, tr',
+  			dropElementsSelector: 'p.caption',
+  			slideGroupClass: 'slide-group',
+  			slideGroupFullyVisibleClass: 'fully-visible',
+  			slideClass: 'slide',
+  			junkClass: 'junk',
+  			slideGroupHiddenClass: 'hidden',
+  			slideHiddenClass: 'hidden',
+  			contentHiddenClass: 'hidden',
+  			hideMouseClass: 'hide-mouse',
+  			fontSize: '29px',
+  			debug: false,
+  			position: 1,
+  			contentPosition: 0
+  		};
 
-		this.options = JSON.parse(JSON.stringify(this.defaultOptions)); // defaults by value
+  		this.options = JSON.parse(JSON.stringify(this.defaultOptions)); // defaults by value
 
-		if (options) {
-			this.setOptions(options);
-		}
+  		if (optionsOrHash && typeof optionsOrHash === 'object') {
+  			this.setOptions(optionsOrHash);
+  		}
 
-		this.setFontSize(element, this.options.fontSize)
+  		this.setFontSize(element, this.options.fontSize)
 
-		const presentationElement = this.parseDom(element);
+  		const presentationElement = this.parseDom(element);
 
-		element.appendChild(presentationElement);
+  		element.appendChild(presentationElement);
 
-		this.updateSlidePerState();
+  		if (optionsOrHash && typeof optionsOrHash === 'string') {
+  			this.setOptions(this.getState(optionsOrHash));
+  		}
 
-		this.bindControls(document.body);
-	}
+  		this.updateSlidePerState();
 
-	static getState(hash) {
-		let stateObject = null;
+  		this.bindControls(document.body);
+  	}
 
-		const bareHash = hash.replace(/^#/, '');
-		const decodedHash = decodeURIComponent(bareHash);
-		try {
-			stateObject = JSON.parse(decodedHash);
-		} catch(ignore) {}
+  	getState(hash) {
+  		let stateObject = null;
 
-		return stateObject;
-	}
+  		const bareHash = hash.replace(/^#/, '');
+  		const decodedHash = decodeURIComponent(bareHash);
+      const stateListPattern = /^(?<position>\d*|\$)(\.(?<contentPosition>\d+|\$))?$/
+      const statePatternMatch = decodedHash.match(stateListPattern)
+      if (statePatternMatch) {
+        stateObject = {}
+        debugger;
+        if (statePatternMatch.groups?.position === '$') {
+          stateObject.position = this.slides.length;
+        } else {
+          stateObject.position = Number(statePatternMatch.groups.position) || 1;
+        }
+        if (statePatternMatch.groups?.contentPosition === '$') {
+          const slideContent = this.selectSlideContentElements(this.slides[stateObject.position - 1]);
+          stateObject.contentPosition = slideContent.length;
+        } else {
+          stateObject.contentPosition = Number(statePatternMatch.groups?.contentPosition);
+        }
+      } else {
+        try {
+          stateObject = JSON.parse(decodedHash);
+        } catch(ignore) {}
+      }
 
-	static setState(stateObject) {
-		let hash = '';
+  		return stateObject;
+  	}
 
-		if (stateObject && Object.keys(stateObject).length > 0) {
-			hash = '#' + encodeURIComponent(JSON.stringify(stateObject));
-		}
+  	setState(stateObject) {
+  		let hash = '#';
 
-		history.replaceState(stateObject, 'presentation', hash);
-	}
+  		if (stateObject && Object.keys(stateObject).length > 0) {
+        const position = stateObject?.position || 1
+        hash += position
+        if (stateObject?.contentPosition) {
+          hash += '.' + stateObject.contentPosition
+        }
+  		}
 
-	setOptions(options) {
-		let overrides = {};
+  		history.replaceState(stateObject, 'presentation', hash);
+  	}
 
-		for (let key in this.options) {
-			if (key in options) {
-				this.options[key] = options[key];
-			}
+  	setOptions(options) {
+  		let overrides = {};
 
-			if (this.options[key] !== this.defaultOptions[key]) {
-				overrides[key] = this.options[key];
-			}
-		}
+  		for (let key in this.options) {
+  			if (key in options) {
+  				this.options[key] = options[key];
+  			}
 
-		Presentation.setState(overrides);
-	}
+  			if (this.options[key] !== this.defaultOptions[key]) {
+  				overrides[key] = this.options[key];
+  			}
+  		}
 
-	updateSlidePerState() {
-		this.showSlideAtIndex(this.slides, this.options.position, this.options.contentPosition);
-	}
+  		this.setState(overrides);
+  	}
 
-	parseDom(element) {
-		this.slides = [];
-		let presentationEl = document.createElement('div');
+  	updateSlidePerState() {
+  		this.showSlideAtIndex(this.slides, this.options.position, this.options.contentPosition);
+  	}
 
-		const makeSlideGroup = (parent) => {
-			let newSlideGroup = document.createElement('div');
-			newSlideGroup.classList.add(this.options.slideGroupClass);
-			parent.appendChild(newSlideGroup);
-			return newSlideGroup;
-		};
+  	parseDom(element) {
+  		this.slides = [];
+  		let presentationEl = document.createElement('div');
 
-		const makeSlide = (parent) => {
-			let newSlide = document.createElement('div');
-			newSlide.classList.add(this.options.slideClass);
-			parent.appendChild(newSlide);
-			this.slides.push(newSlide);
-			return newSlide;
-		};
+  		const makeSlideGroup = (parent) => {
+  			let newSlideGroup = document.createElement('div');
+  			newSlideGroup.classList.add(this.options.slideGroupClass);
+  			parent.appendChild(newSlideGroup);
+  			return newSlideGroup;
+  		};
 
-		let parentElement = makeSlideGroup(presentationEl);
-		let slideGroup, slide;
-		while (element.firstChild) {
-			const childElement = element.firstChild;
-			if (childElement.nodeType === Node.ELEMENT_NODE && !childElement.matches(this.options.dropElementsSelector)) {
-				if (childElement.matches(this.options.slideGroupSelector)) {
-					parentElement = slideGroup = makeSlideGroup(presentationEl);
-				} else if (childElement.matches(this.options.slideStartSelector)) {
-					parentElement = slide = makeSlide(slideGroup);
-					if (!childElement.innerText) {
-						slide.setAttribute('x-no-header', true);
-					}
-				}
-			}
+  		const makeSlide = (parent) => {
+  			let newSlide = document.createElement('div');
+  			newSlide.classList.add(this.options.slideClass);
+  			parent.appendChild(newSlide);
+  			this.slides.push(newSlide);
+  			return newSlide;
+  		};
 
-			parentElement.appendChild(childElement);
-		}
+  		let parentElement = makeSlideGroup(presentationEl);
+  		let slideGroup, slide;
+  		while (element.firstChild) {
+  			const childElement = element.firstChild;
+  			if (childElement.nodeType === Node.ELEMENT_NODE && !childElement.matches(this.options.dropElementsSelector)) {
+  				if (childElement.matches(this.options.slideGroupSelector)) {
+  					parentElement = slideGroup = makeSlideGroup(presentationEl);
+  				} else if (childElement.matches(this.options.slideStartSelector)) {
+  					parentElement = slide = makeSlide(slideGroup);
+  					if (!childElement.innerText) {
+  						slide.setAttribute('x-no-header', true);
+  					}
+  				}
+  			}
 
-		if (slide.parentElement !== slideGroup) {
-			// This group has now slides yet
-			slide = makeSlide(slideGroup);
-		}
+  			parentElement.appendChild(childElement);
+  		}
 
-		return presentationEl;
-	}
+  		if (slide.parentElement !== slideGroup) {
+  			// This group has now slides yet
+  			slide = makeSlide(slideGroup);
+  		}
 
-	/**
-	 * @param contentPositionOrVisibility either boolean or number
-	 */
-	showSlideAtIndex(element, index, contentPositionOrVisibility) {
-		for (let i = 0; i < this.slides.length; i++) {
-			if (i !== index) {
-				this.slides[i].classList.add(this.options.slideHiddenClass);
-				this.slides[i].parentElement.classList.add(this.options.slideGroupHiddenClass);
-			}
-		}
+  		return presentationEl;
+  	}
 
-		this.slides[index].classList.remove(this.options.slideHiddenClass);
-		this.slides[index].parentElement.classList.remove(this.options.slideGroupHiddenClass);
+  	/**
+  	 * @param contentPositionOrVisibility either boolean or number
+  	 */
+  	showSlideAtIndex(element, index, contentPositionOrVisibility) {
+  		for (let i = 1; i <= this.slides.length; i++) {
+  			if (i !== index) {
+  				this.slides[i - 1].classList.add(this.options.slideHiddenClass);
+  				this.slides[i - 1].parentElement.classList.add(this.options.slideGroupHiddenClass);
+  			}
+  		}
 
-		const visibleContentElements = this.toggleAllContentOnSlide(this.slides[index], contentPositionOrVisibility);
-		if (typeof contentPositionOrVisibility === 'boolean') {
-			this.setOptions({contentPosition: visibleContentElements});
-		}
-	}
+  		this.slides[index - 1].classList.remove(this.options.slideHiddenClass);
+  		this.slides[index - 1].parentElement.classList.remove(this.options.slideGroupHiddenClass);
 
-	goToSlide(index, contentVisible = true) {
-		this.setOptions({position: index});
-		this.showSlideAtIndex(this.slides, this.options.position, contentVisible);
-	}
+  		const visibleContentElements = this.toggleAllContentOnSlide(this.slides[index - 1], contentPositionOrVisibility);
+  		if (typeof contentPositionOrVisibility === 'boolean') {
+  			this.setOptions({contentPosition: visibleContentElements});
+  		}
+  	}
 
-	previousSlide(contentVisible = true) {
-		if (this.options.position > 0) {
-			this.goToSlide(this.options.position - 1, contentVisible);
-		}
-	}
+  	goToSlide(index, contentVisible = true) {
+  		this.setOptions({position: index});
+  		this.showSlideAtIndex(this.slides, this.options.position, contentVisible);
+  	}
 
-	nextSlide(contentVisible = true) {
-		if (this.options.position < this.slides.length - 1) {
-			this.goToSlide(this.options.position + 1, contentVisible);
-		}
-	}
+  	previousSlide(contentVisible = true) {
+  		if (this.options.position > 1) {
+  			this.goToSlide(this.options.position - 1, contentVisible);
+      } else {
+  			this.goToSlide(1, contentVisible);
+  		}
+  	}
 
-	/**
-	 * @param contentPositionOrVisibility either boolean or number
-	 * @return count of visible elements
-	 */
-	toggleAllContentOnSlide(slide, contentPositionOrVisibility) {
-		let visibleCount = 0;
-		const stepContentElements = slide.querySelectorAll(this.options.stepContentSelector);
+  	nextSlide(contentVisible = true) {
+  		if (this.options.position < this.slides.length) {
+  			this.goToSlide(this.options.position + 1, contentVisible);
+      } else {
+  			this.goToSlide(this.slides.length, contentVisible);
+  		}
+  	}
 
-		if (!contentPositionOrVisibility && slide.hasAttribute('x-no-header')) {
-			contentPositionOrVisibility = 1;
-		}
+    selectSlideContentElements(slide) {
+      return slide.querySelectorAll(this.options.stepContentSelector)
+    }
 
-		for (let i = 0; i < stepContentElements.length; i++) {
-			const visible = contentPositionOrVisibility === true || (
-				contentPositionOrVisibility !== false &&
-				i < contentPositionOrVisibility
-			);
-			if (visible) visibleCount++;
-			const classOperation = visible ? 'remove' : 'add';
-			stepContentElements[i].classList[classOperation](this.options.contentHiddenClass);
-		}
-		if (this.options.debug) console.log(visibleCount);
+  	/**
+  	 * @param contentPositionOrVisibility either boolean or number
+  	 * @return count of visible elements
+  	 */
+  	toggleAllContentOnSlide(slide, contentPositionOrVisibility) {
+  		let visibleCount = 0;
+  		const stepContentElements = this.selectSlideContentElements(slide);
 
-		let scrollOptions = {
-			left: 0,
-			top: 0,
-			behavior: 'smooth'
-		};
-		if (visibleCount > 0) {
-			const bottomElement = stepContentElements[visibleCount - 1];
-			const scrollPadding = parseFloat(this.options.fontSize, 10) * 3;
-			scrollOptions.top = helpers.getOffsetFromSlide(slide, bottomElement).top + bottomElement.offsetHeight - slide.offsetHeight + scrollPadding;
-		}
-		slide.parentElement.classList[visibleCount === stepContentElements.length ? 'add' : 'remove'](this.options.slideGroupFullyVisibleClass);
-		slide.scrollTo(scrollOptions);
+  		if (!contentPositionOrVisibility && slide.hasAttribute('x-no-header')) {
+  			contentPositionOrVisibility = 1;
+  		}
 
-		return visibleCount;
-	}
+  		for (let i = 0; i < stepContentElements.length; i++) {
+  			const visible = contentPositionOrVisibility === true || (
+            contentPositionOrVisibility !== false &&
+            i < contentPositionOrVisibility
+          );
+  			if (visible) visibleCount++;
+  			const classOperation = visible ? 'remove' : 'add';
+  			stepContentElements[i].classList[classOperation](this.options.contentHiddenClass);
+  		}
+  		if (this.options.debug) console.log(visibleCount);
 
-	hideLastVisibleElement() {
-		if (this.options.contentPosition > 0) {
-			this.setOptions({contentPosition: this.options.contentPosition - 1});
-			const currentSlide = this.slides[this.options.position];
-			this.toggleAllContentOnSlide(currentSlide, this.options.contentPosition);
-		}
-	}
+  		let scrollOptions = {
+  			left: 0,
+  			top: 0,
+  			behavior: 'smooth'
+  		};
+  		if (visibleCount > 0) {
+  			const bottomElement = stepContentElements[visibleCount - 1];
+  			const scrollPadding = parseFloat(this.options.fontSize, 10) * 3;
+  			scrollOptions.top = helpers.getOffsetFromSlide(slide, bottomElement).top + bottomElement.offsetHeight - slide.offsetHeight + scrollPadding;
+  		}
+  		slide.parentElement.classList[visibleCount === stepContentElements.length ? 'add' : 'remove'](this.options.slideGroupFullyVisibleClass);
+  		slide.scrollTo(scrollOptions);
 
-	showNextHiddenElement() {
-		const currentSlide = this.slides[this.options.position];
-		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, this.options.contentPosition + 1);
-		if (visibleContentElements !== this.options.contentPosition) {
-			this.setOptions({contentPosition: visibleContentElements});
-		}
-	}
+  		return visibleCount;
+  	}
 
-	hideAllContent() {
-		const currentSlide = this.slides[this.options.position];
-		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, false);
-		this.setOptions({contentPosition: visibleContentElements});
-	}
+  	hideLastVisibleElement() {
+  		if (this.options.contentPosition > 0) {
+  			this.setOptions({contentPosition: this.options.contentPosition - 1});
+  			const currentSlide = this.slides[this.options.position - 1];
+  			this.toggleAllContentOnSlide(currentSlide, this.options.contentPosition);
+  		}
+  	}
 
-	showAllContent() {
-		const currentSlide = this.slides[this.options.position];
-		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, true);
-		this.setOptions({contentPosition: visibleContentElements});
-	}
+  	showNextHiddenElement() {
+  		const currentSlide = this.slides[this.options.position - 1];
+  		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, this.options.contentPosition + 1);
+  		if (visibleContentElements !== this.options.contentPosition) {
+  			this.setOptions({contentPosition: visibleContentElements});
+  		}
+  	}
 
-	setFontSize(element, fontSize) {
-		this.setOptions({fontSize: fontSize});
-		element.style.fontSize = this.options.fontSize;
-	}
+  	hideAllContent() {
+  		const currentSlide = this.slides[this.options.position - 1];
+  		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, false);
+  		this.setOptions({contentPosition: visibleContentElements});
+  	}
 
-	adjustFontSize(element, direction) {
-		const fontSize = (parseFloat(this.options.fontSize, 10) + direction) + 'px';
-		this.setFontSize(element, fontSize);
-	}
+  	showAllContent() {
+  		const currentSlide = this.slides[this.options.position - 1];
+  		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, true);
+  		this.setOptions({contentPosition: visibleContentElements});
+  	}
 
-	showHelp(element) {
-		// TODO: derive from actual control assignments, by including descriptions when binding.
-		const keyboardShortcuts = [
-			[['?'], 'Show this help'],
-			[['Escape'], 'Close this window.'],
-			[['ArrowUp'], 'hideLastVisibleElement'],
-			[['ArrowDown'], 'showNextHiddenElement'],
-			[['ArrowLeft'], 'previousSlide'],
-			[['ArrowRight'], 'nextSlide: contents hidden'],
-			[['Shift', 'ArrowUp'], 'hideAllContent'],
-			[['Shift', 'ArrowDown'], 'showAllContent'],
-			[['Shift', 'ArrowRight'], 'nextSlide'],
-			[['Control', 'Shift', '+'], 'adjustFontSize +1'],
-			[['Control', 'Shift', '-'], 'adjustFontSize -1'],
-			[['Control', 'Shift', '0'], 'adjustFontSize default'],
-			[['Home'], 'Go to first slide'],
-			[['End'], 'Go to last slide']
-		];
-		let helpMarkup = '<table><thead><tr><td>Key</td><td>Action</td></tr></thead><tbody>';
-		keyboardShortcuts.forEach(binding => {
-			const keyMarkup = binding[0]
-				.map(key => {
-					return `<key>${key}</key>`;
-				})
-				.join(' + ');
-			helpMarkup += `<tr><td>${keyMarkup}</td><td>${binding[1]}</td></tr>`;
-		});
-		helpMarkup += '</tbody></table>';
-		helpers.hideModal();
-		helpers.showModal(helpMarkup, element);
-	}
+  	setFontSize(element, fontSize) {
+  		this.setOptions({fontSize: fontSize});
+  		element.style.fontSize = this.options.fontSize;
+  	}
 
-	hideHelp() {
-		helpers.hideModal();
-	}
+  	adjustFontSize(element, direction) {
+  		const fontSize = (parseFloat(this.options.fontSize, 10) + direction) + 'px';
+  		this.setFontSize(element, fontSize);
+  	}
 
-	bindControls(element) {
-		let controls = {
-			'?': () => this.showHelp(element),
-			Escape: () => this.hideHelp(),
-			ArrowUp: () => this.hideLastVisibleElement(),
-			ArrowDown: () => this.showNextHiddenElement(),
-			ArrowLeft: () => this.previousSlide(),
-			ArrowRight: () => this.nextSlide(false),
-			'Shift+ArrowUp': () => this.hideAllContent(),
-			'Shift+ArrowDown': () => this.showAllContent(),
-			'Shift+ArrowRight': () => this.nextSlide(), // don't hide content
-			'Control+Shift++': () => this.adjustFontSize(element, 1),
-			'Control+Shift+-': () => this.adjustFontSize(element, -1),
-			'Control+Shift+0': () => this.setFontSize(element, this.defaultOptions.fontSize),
-			Home: () => this.goToSlide(0, false),
-			End: () => this.goToSlide(this.slides.length - 1),
-		};
+  	showHelp(element) {
+  		// TODO: derive from actual control assignments, by including descriptions when binding.
+  		const keyboardShortcutsDoc = [
+  			[['?'], 'Show this help, <key>Esc</key> to hide'],
+  			[['🠥'], 'hideLastVisibleElement'],
+  			[['🠧'], 'showNextHiddenElement'],
+  			[['🠤'], 'previousSlide'],
+  			[['🠦'], 'nextSlide: contents hidden'],
+  			[['Shift', 'ArrowUp'], 'hideAllContent'],
+  			[['Shift', 'ArrowDown'], 'showAllContent'],
+  			[['Shift', 'ArrowRight'], 'nextSlide'],
+  			[['Control', 'Shift', '+'], 'adjustFontSize +1'],
+  			[['Control', 'Shift', '-'], 'adjustFontSize -1'],
+  			[['Control', 'Shift', '0'], 'adjustFontSize default'],
+  			[['Home'], 'Go to first slide'],
+  			[['End'], 'Go to last slide']
+  		];
+  		let helpMarkup = '<table><thead><tr><td>Key</td><td>Action</td></tr></thead><tbody>';
+  		keyboardShortcutsDoc.forEach(binding => {
+  			const keyMarkup = binding[0]
+  				.map(key => {
+  					return `<key>${key}</key>`;
+  				})
+  				.join(' + ');
+  			helpMarkup += `<tr><td>${keyMarkup}</td><td>${binding[1]}</td></tr>`;
+  		});
+  		helpMarkup += '</tbody></table>';
+  		helpers.hideModal();
+  		helpers.showModal(helpMarkup, element);
+  	}
 
-		// aliases
-		controls['Shift+ArrowLeft'] = controls.ArrowLeft; // so that one is not punished for holding the shift key
-		controls['Control+Shift+_'] = controls['Control+Shift+-'];
-		controls['Control+Shift+)'] = controls['Control+Shift+0'];
-		controls['Control+Shift+='] = controls['Control+Shift++'];
-		controls['Shift+?'] = controls['?'];
-		controls.PageUp = controls.ArrowLeft;
-		controls.PageDown = controls['Shift+ArrowRight'];
+  	hideHelp() {
+  		helpers.hideModal();
+  	}
 
-		element.addEventListener('keydown', event => {
-			element.classList.add(this.options.hideMouseClass);
-			let keyTerms = [];
-			if (event.metaKey) keyTerms.push('Meta');
-			if (event.ctrlKey) keyTerms.push('Control');
-			if (event.altKey) keyTerms.push('Alt');
-			if (event.shiftKey) keyTerms.push('Shift');
-			if (keyTerms.indexOf(event.key) === -1) {
-				keyTerms.push(event.key);
-			}
-			const keyDescription = keyTerms.join('+');
-			if (this.options.debug) console.log(keyDescription);
-			if (keyDescription in controls) {
-				event.preventDefault();
-				controls[keyDescription](event);
-			}
-		});
+  	bindControls(element) {
+  		let controls = {
+  			'?': () => this.showHelp(element),
+  			Escape: () => this.hideHelp(),
+  			ArrowUp: () => this.hideLastVisibleElement(),
+  			ArrowDown: () => this.showNextHiddenElement(),
+  			ArrowLeft: () => this.previousSlide(),
+  			ArrowRight: () => this.nextSlide(false),
+  			'Shift+ArrowUp': () => this.hideAllContent(),
+  			'Shift+ArrowDown': () => this.showAllContent(),
+  			'Shift+ArrowRight': () => this.nextSlide(), // don't hide content
+  			'Control+Shift++': () => this.adjustFontSize(element, 1),
+  			'Control+Shift+-': () => this.adjustFontSize(element, -1),
+  			'Control+Shift+0': () => this.setFontSize(element, this.defaultOptions.fontSize),
+  			Home: () => this.goToSlide(1, false),
+  			End: () => this.goToSlide(this.slides.length),
+  		};
 
-		element.addEventListener('mousemove', event => {
-			element.classList.remove(this.options.hideMouseClass);
-		});
+  		// aliases
+  		controls['Shift+ArrowLeft'] = controls.ArrowLeft; // so that one is not punished for holding the shift key
+  		controls['Control+Shift+_'] = controls['Control+Shift+-'];
+  		controls['Control+Shift+)'] = controls['Control+Shift+0'];
+  		controls['Control+Shift+='] = controls['Control+Shift++'];
+  		controls['Shift+?'] = controls['?'];
+  		controls.PageUp = controls.ArrowLeft;
+  		controls.PageDown = controls['Shift+ArrowRight'];
 
-		const handleInternalLink = event => {
-			event.preventDefault();
-			const newState = Presentation.getState(event.target.getAttribute('href'));
-			if (newState) {
-				this.setOptions(newState);
-				this.updateSlidePerState();
-			}
-		};
+  		element.addEventListener('keydown', event => {
+  			element.classList.add(this.options.hideMouseClass);
+  			let keyTerms = [];
+  			if (event.metaKey) keyTerms.push('Meta');
+  			if (event.ctrlKey) keyTerms.push('Control');
+  			if (event.altKey) keyTerms.push('Alt');
+  			if (event.shiftKey) keyTerms.push('Shift');
+  			if (keyTerms.indexOf(event.key) === -1) {
+  				keyTerms.push(event.key);
+  			}
+  			const keyDescription = keyTerms.join('+');
+  			if (this.options.debug) console.log(keyDescription);
+  			if (keyDescription in controls) {
+  				event.preventDefault();
+  				controls[keyDescription](event);
+  			}
+  		});
 
-		const internalLinks = element.querySelectorAll('a[href^="#"]');
-		if (internalLinks && internalLinks.length > 0) {
-			internalLinks.forEach(link => {
-				link.addEventListener('click', handleInternalLink);
-			});
-		}
+  		element.addEventListener('mousemove', event => {
+  			element.classList.remove(this.options.hideMouseClass);
+  		});
 
-		this.controls = controls; // to enable live debugging
-	}
+  		const handleInternalLink = event => {
+  			event.preventDefault();
+  			const newState = this.getState(event.target.getAttribute('href'));
+  			if (newState) {
+  				this.setOptions(newState);
+  				this.updateSlidePerState();
+  			}
+  		};
 
-}
+  		const internalLinks = element.querySelectorAll('a[href^="#"]');
+  		if (internalLinks && internalLinks.length > 0) {
+  			internalLinks.forEach(link => {
+  				link.addEventListener('click', handleInternalLink);
+  			});
+  		}
 
-document.addEventListener('DOMContentLoaded', () => {
-	// helpers.loadStyle('style.css'); // concat'd in build script
+  		this.controls = controls; // to enable live debugging
+  	}
 
-	window.presentation = new Presentation(
-		document.body,
-		Presentation.getState(window.location.hash)
-	);
+  }
 
-	window.debug = () => {
-		window.presentation.setOptions({debug: !presentation.options.debug});
-	}
-});</script>
+  document.addEventListener('DOMContentLoaded', () => {
+  	// helpers.loadStyle('style.css'); // concat'd in build script
+
+  	window.presentation = new Presentation(
+  		document.body,
+  		window.location.hash
+  	);
+
+  	window.debug = () => {
+  		window.presentation.setOptions({debug: !presentation.options.debug});
+  	}
+  });</script>
 </head>
-<h1 id="my-presentation">My Presentation</h1>
-<h2 id="overview-arrow-keys-to-advance">Overview (arrow keys to advance)</h2>
-<p>(<a href="#%7B%22position%22%3A6%2C%22contentPosition%22%3A1%7D">jump to source</a>)</p>
-<ol style="list-style-type: decimal">
-<li>First topic:</li>
-<li>I'm just trying</li>
-<li>To make a point
+<body>
+<header id="title-block-header">
+<h1 class="title">Demo Presentation</h1>
+</header>
+<h1 id="navigation">Navigation</h1>
+<h2 id="begin-by-pressing-the-down-key">Begin by pressing the
+<code>down</code> key</h2>
+<p>Reveal content with the <code>Down</code> arrow (<code>Up</code> to
+reverse).</p>
+<p>Show the next slide with the <code>Right</code> arrow key
+(<code>Left</code> for previous).</p>
+<p>Press <code>?</code> to see a list of keyboard shortcuts.</p>
+<h2 id="jump-around">Jump around</h2>
+<p>Show entire slides at once with
+<code>PageDown</code>/<code>PageUp</code> keys</p>
+<p><em>On the first slide, press <code>PageUp</code> to reveal the
+entire slide.</em></p>
+<p>To jump to the beginning/end with
+<code>Home</code>/<code>End</code>.</p>
+<h2 id="cues">Cues</h2>
+<p>The header will show</p>
 <ul>
-<li>here</li>
-</ul></li>
-<li>BLAAM
-<ul>
-<li>THIS PIECE</li>
-<li>OF CRAP!</li>
-</ul></li>
-</ol>
-<h1 id="topic-1">Topic 1</h1>
-<h2 id="slide-1">Slide 1</h2>
-<p>Here's a paragraph of some text. <code>Here's a bit of code inside the paragraph;</code> Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text.</p>
-<pre><code>testing code</code></pre>
-<p>Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text. Here's a paragraph of some text.</p>
-<h1 id="heres-this-whole-other-section">Here's this whole other section</h1>
-<p>with some stuff in the header that's not in the slide</p>
-<h2 id="and-another-slidie">and another slidie</h2>
-<p>Slides!</p>
-<p>Yay</p>
-<h2 id="another-slide">another slide</h2>
-<p>yup</p>
-<h2 id="and-another-one">and <em>another</em> one</h2>
-<h1 id="questions">Questions</h1>
-<h2 id="please-feel-free-to-ask-any-questions.">Please feel free to ask any questions.</h2>
-<h1 id="source">Source</h1>
+<li><strong><code>»</code></strong> when a slide is fully revealed</li>
+<li><strong><code>•</code></strong> when the presentation is ended*</li>
+</ul>
+<p><a href="#5.$">linking</a>, <a href="#$.$">source</a></p>
+<h1 id="formatting">Formatting</h1>
 <h2 id="markdown">Markdown</h2>
-<pre><code># My Presentation
-
-## Overview (arrow keys to advance)
-
-1. First topic:
-2. I&#39;m just trying
-3. To make a point
-    - here
-4. BLAAM
-    - THIS PIECE
-    - OF CRAP!
-
-# Topic 1
-
-## Slide 1
-
-Here&#39;s a paragraph of some text. `Here&#39;s a bit of code inside the paragraph;` Here&#39;s a paragraph of some text. Here&#39;s a paragraph of some text. Here&#39;s a paragraph of some text. Here&#39;s a paragraph of some text. Here&#39;s a paragraph of some text.
-```
-testing code
-```
-Here&#39;s a paragraph of some text. Here&#39;s a paragraph of some text. Here&#39;s a paragraph of some text. Here&#39;s a paragraph of some text. Here&#39;s a paragraph of some text. Here&#39;s a paragraph of some text.
-
-# Here&#39;s this whole other section
-
-with some stuff in the header that&#39;s not in the slide
-
-## and another slidie
-
-Slides!
-
-Yay
-
-## another slide
-
-yup
-
-## and _another_ one
-
-# Questions
-
-## Please feel free to ask any questions.
-
-# Markdown source
-
-    &lt;omitted for sanity&gt;</code></pre>
+<p>The input Markdown is rendered using <a href="https://pandoc.org"><code>pandoc</code></a></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="at">-f</span> markdown <span class="at">-t</span> html <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--embed-resources</span> <span class="at">--standalone</span> <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--include-in-header</span><span class="op">=</span><span class="st">&quot;.tmp-head-include.html&quot;</span></span></code></pre></div>
+<p>Presentation styles and scripts are packed into a temporary file.</p>
+<h2 id="linking-to-slides">Linking to slides</h2>
+<p>Your position in the presentation is also stored in a URI fragment,
+so you can reload the page and keep your place, or insert links,
+like</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode md"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>full <span class="co">[</span><span class="ot">first</span><span class="co">](#1.$)</span> and <span class="co">[</span><span class="ot">last</span><span class="co">](#$.$)</span> slides</span></code></pre></div>
+<blockquote>
+<p>full <a href="#1.$">first</a> and <a href="#$.$">last</a> slides</p>
+</blockquote>
+<p>Links are of the form <code>#SLIDE.ELEMENT</code>, where:</p>
+<ul>
+<li><code>SLIDE</code> is a 1-indexed slide number.</li>
+<li><code>ELEMENT</code> (optional) is a 1-indexed content element
+number.</li>
+</ul>
+<p>Either <code>SLIDE</code> or <code>ELEMENT</code> may be
+<code>$</code> for the last value.</p>
+<h1 id="wrapping-up">Wrapping up</h1>
+<h2 id="markdown-source">Markdown source</h2>
+<p>Here’s the source of this presentation:</p>
+<div style="font-size: 0.7em">
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> Demo Presentation</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">...</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu"># Overview</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Begin by pressing the `down` key</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>Reveal content with the <span class="in">`Down`</span> arrow (<span class="in">`Up`</span> to reverse).</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>Show the next slide with the <span class="in">`Right`</span> arrow key (<span class="in">`Left`</span> for previous).</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>Press <span class="in">`?`</span> to see a list of keyboard shortcuts.</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## Jump around</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>Show entire slides at once with <span class="in">`PageDown`</span>/<span class="in">`PageUp`</span> keys</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>*On the first slide, press `PageUp` to reveal the entire slide.*</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>To jump to the beginning/end with <span class="in">`Home`</span>/<span class="in">`End`</span>.</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cues</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>The header will show</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`»`** when a slide is fully revealed</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**`•`** when the presentation is ended<span class="sc">\*</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">linking</span><span class="co">](#5.$)</span>, <span class="co">[</span><span class="ot">source</span><span class="co">](#$.$)</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="fu"># Formatting</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## Markdown</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>The input Markdown is rendered using <span class="co">[</span><span class="ot">`pandoc`</span><span class="co">](https://pandoc.org)</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="in">```sh</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="ex">pandoc</span> <span class="at">-f</span> markdown <span class="at">-t</span> html <span class="dt">\</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="at">--embed-resources</span> <span class="at">--standalone</span> <span class="dt">\</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="at">--include-in-header</span><span class="op">=</span><span class="st">&quot;.tmp-head-include.html&quot;</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>Presentation styles and scripts are packed into a temporary file.</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Linking to slides</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>Your position in the presentation is also stored in a URI fragment, so you can</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>reload the page and keep your place, or insert links, like</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="in">```md</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>full <span class="co">[</span><span class="ot">first</span><span class="co">](#1.$)</span> and <span class="co">[</span><span class="ot">last</span><span class="co">](#$.$)</span> slides</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; full </span><span class="co">[</span><span class="ot">first</span><span class="co">](#1.$)</span><span class="at"> and </span><span class="co">[</span><span class="ot">last</span><span class="co">](#$.$)</span><span class="at"> slides</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>Links are of the form <span class="in">`#SLIDE.ELEMENT`</span>, where:</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`SLIDE`</span> is a 1-indexed slide number.</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`ELEMENT`</span> (optional) is a 1-indexed content element number.  </span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>Either <span class="in">`SLIDE`</span> or <span class="in">`ELEMENT`</span> may be <span class="in">`$`</span> for the last value.</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="fu"># Wrapping up</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="fu">## Markdown source</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>Here&#39;s the source of this presentation:</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span> <span class="er">style</span><span class="ot">=</span><span class="st">&quot;font-size: 0.7em&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a><span class="in">````markdown</span></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>((This source, code fence with more than 3 backticks, to contain nested code fenced blocks.))</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a><span class="in">````</span></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a><span class="sc">\*</span> The **`•`** symbol appears in the *last `&lt;h1&gt;`*, which may contain multiple slides, one for each <span class="in">`&lt;h2&gt;`</span>.</span></code></pre></div>
+</div>
+<p>* The <strong><code>•</code></strong> symbol appears in the <em>last
+<code>&lt;h1&gt;</code></em>, which may contain multiple slides, one for
+each <code>&lt;h2&gt;</code>.</p>
+</body>
+</html>
