@@ -49,7 +49,7 @@ const helpers = {
 
 class Presentation {
 
-	constructor(element, options) {
+	constructor(element, optionsOrHash) {
 		this.defaultOptions = {
 			slideGroupSelector: 'h1, .slide-group',
 			slideStartSelector: 'h2, .slide',
@@ -65,14 +65,14 @@ class Presentation {
 			hideMouseClass: 'hide-mouse',
 			fontSize: '29px',
 			debug: false,
-			position: 0,
+			position: 1,
 			contentPosition: 0
 		};
 
 		this.options = JSON.parse(JSON.stringify(this.defaultOptions)); // defaults by value
 
-		if (options) {
-			this.setOptions(options);
+		if (optionsOrHash && typeof optionsOrHash === 'object') {
+			this.setOptions(optionsOrHash);
 		}
 
 		this.setFontSize(element, this.options.fontSize)
@@ -81,28 +81,53 @@ class Presentation {
 
 		element.appendChild(presentationElement);
 
+		if (optionsOrHash && typeof optionsOrHash === 'string') {
+			this.setOptions(this.getState(optionsOrHash));
+		}
+
 		this.updateSlidePerState();
 
 		this.bindControls(document.body);
 	}
 
-	static getState(hash) {
+	getState(hash) {
 		let stateObject = null;
 
 		const bareHash = hash.replace(/^#/, '');
 		const decodedHash = decodeURIComponent(bareHash);
-		try {
-			stateObject = JSON.parse(decodedHash);
-		} catch(ignore) {}
+    const stateListPattern = /^(?<position>\d*|\$)(\.(?<contentPosition>\d+|\$))?$/
+    const statePatternMatch = decodedHash.match(stateListPattern)
+    if (statePatternMatch) {
+      stateObject = {}
+      if (statePatternMatch.groups?.position === '$') {
+        stateObject.position = this.slides.length;
+      } else {
+        stateObject.position = Number(statePatternMatch.groups.position) || 1;
+      }
+      if (statePatternMatch.groups?.contentPosition === '$') {
+        const slideContent = this.selectSlideContentElements(this.slides[stateObject.position - 1]);
+        stateObject.contentPosition = slideContent.length;
+      } else {
+        stateObject.contentPosition = Number(statePatternMatch.groups?.contentPosition);
+      }
+    } else {
+      try {
+        stateObject = JSON.parse(decodedHash);
+      } catch(ignore) {}
+    }
 
 		return stateObject;
 	}
 
-	static setState(stateObject) {
-		let hash = '';
+	setState(stateObject) {
+		let hash = '#';
 
 		if (stateObject && Object.keys(stateObject).length > 0) {
-			hash = '#' + encodeURIComponent(JSON.stringify(stateObject));
+      const position = stateObject?.position || 1
+      hash += position
+      if (stateObject?.contentPosition) {
+        hash += '.' + stateObject.contentPosition
+      }
 		}
 
 		history.replaceState(stateObject, 'presentation', hash);
@@ -121,7 +146,7 @@ class Presentation {
 			}
 		}
 
-		Presentation.setState(overrides);
+		this.setState(overrides);
 	}
 
 	updateSlidePerState() {
@@ -177,17 +202,17 @@ class Presentation {
 	 * @param contentPositionOrVisibility either boolean or number
 	 */
 	showSlideAtIndex(element, index, contentPositionOrVisibility) {
-		for (let i = 0; i < this.slides.length; i++) {
+		for (let i = 1; i <= this.slides.length; i++) {
 			if (i !== index) {
-				this.slides[i].classList.add(this.options.slideHiddenClass);
-				this.slides[i].parentElement.classList.add(this.options.slideGroupHiddenClass);
+				this.slides[i - 1].classList.add(this.options.slideHiddenClass);
+				this.slides[i - 1].parentElement.classList.add(this.options.slideGroupHiddenClass);
 			}
 		}
 
-		this.slides[index].classList.remove(this.options.slideHiddenClass);
-		this.slides[index].parentElement.classList.remove(this.options.slideGroupHiddenClass);
+		this.slides[index - 1].classList.remove(this.options.slideHiddenClass);
+		this.slides[index - 1].parentElement.classList.remove(this.options.slideGroupHiddenClass);
 
-		const visibleContentElements = this.toggleAllContentOnSlide(this.slides[index], contentPositionOrVisibility);
+		const visibleContentElements = this.toggleAllContentOnSlide(this.slides[index - 1], contentPositionOrVisibility);
 		if (typeof contentPositionOrVisibility === 'boolean') {
 			this.setOptions({contentPosition: visibleContentElements});
 		}
@@ -199,16 +224,24 @@ class Presentation {
 	}
 
 	previousSlide(contentVisible = true) {
-		if (this.options.position > 0) {
+		if (this.options.position > 1) {
 			this.goToSlide(this.options.position - 1, contentVisible);
+    } else {
+			this.goToSlide(1, contentVisible);
 		}
 	}
 
 	nextSlide(contentVisible = true) {
-		if (this.options.position < this.slides.length - 1) {
+		if (this.options.position < this.slides.length) {
 			this.goToSlide(this.options.position + 1, contentVisible);
+    } else {
+			this.goToSlide(this.slides.length, contentVisible);
 		}
 	}
+
+  selectSlideContentElements(slide) {
+    return slide.querySelectorAll(this.options.stepContentSelector)
+  }
 
 	/**
 	 * @param contentPositionOrVisibility either boolean or number
@@ -216,7 +249,7 @@ class Presentation {
 	 */
 	toggleAllContentOnSlide(slide, contentPositionOrVisibility) {
 		let visibleCount = 0;
-		const stepContentElements = slide.querySelectorAll(this.options.stepContentSelector);
+		const stepContentElements = this.selectSlideContentElements(slide);
 
 		if (!contentPositionOrVisibility && slide.hasAttribute('x-no-header')) {
 			contentPositionOrVisibility = 1;
@@ -224,9 +257,9 @@ class Presentation {
 
 		for (let i = 0; i < stepContentElements.length; i++) {
 			const visible = contentPositionOrVisibility === true || (
-				contentPositionOrVisibility !== false &&
-				i < contentPositionOrVisibility
-			);
+          contentPositionOrVisibility !== false &&
+          i < contentPositionOrVisibility
+        );
 			if (visible) visibleCount++;
 			const classOperation = visible ? 'remove' : 'add';
 			stepContentElements[i].classList[classOperation](this.options.contentHiddenClass);
@@ -252,13 +285,13 @@ class Presentation {
 	hideLastVisibleElement() {
 		if (this.options.contentPosition > 0) {
 			this.setOptions({contentPosition: this.options.contentPosition - 1});
-			const currentSlide = this.slides[this.options.position];
+			const currentSlide = this.slides[this.options.position - 1];
 			this.toggleAllContentOnSlide(currentSlide, this.options.contentPosition);
 		}
 	}
 
 	showNextHiddenElement() {
-		const currentSlide = this.slides[this.options.position];
+		const currentSlide = this.slides[this.options.position - 1];
 		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, this.options.contentPosition + 1);
 		if (visibleContentElements !== this.options.contentPosition) {
 			this.setOptions({contentPosition: visibleContentElements});
@@ -266,13 +299,13 @@ class Presentation {
 	}
 
 	hideAllContent() {
-		const currentSlide = this.slides[this.options.position];
+		const currentSlide = this.slides[this.options.position - 1];
 		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, false);
 		this.setOptions({contentPosition: visibleContentElements});
 	}
 
 	showAllContent() {
-		const currentSlide = this.slides[this.options.position];
+		const currentSlide = this.slides[this.options.position - 1];
 		const visibleContentElements = this.toggleAllContentOnSlide(currentSlide, true);
 		this.setOptions({contentPosition: visibleContentElements});
 	}
@@ -289,13 +322,12 @@ class Presentation {
 
 	showHelp(element) {
 		// TODO: derive from actual control assignments, by including descriptions when binding.
-		const keyboardShortcuts = [
-			[['?'], 'Show this help'],
-			[['Escape'], 'Close this window.'],
-			[['ArrowUp'], 'hideLastVisibleElement'],
-			[['ArrowDown'], 'showNextHiddenElement'],
-			[['ArrowLeft'], 'previousSlide'],
-			[['ArrowRight'], 'nextSlide: contents hidden'],
+		const keyboardShortcutsDoc = [
+			[['?'], 'Show this help, <key>Esc</key> to hide'],
+			[['🠥'], 'hideLastVisibleElement'],
+			[['🠧'], 'showNextHiddenElement'],
+			[['🠤'], 'previousSlide'],
+			[['🠦'], 'nextSlide: contents hidden'],
 			[['Shift', 'ArrowUp'], 'hideAllContent'],
 			[['Shift', 'ArrowDown'], 'showAllContent'],
 			[['Shift', 'ArrowRight'], 'nextSlide'],
@@ -306,7 +338,7 @@ class Presentation {
 			[['End'], 'Go to last slide']
 		];
 		let helpMarkup = '<table><thead><tr><td>Key</td><td>Action</td></tr></thead><tbody>';
-		keyboardShortcuts.forEach(binding => {
+		keyboardShortcutsDoc.forEach(binding => {
 			const keyMarkup = binding[0]
 				.map(key => {
 					return `<key>${key}</key>`;
@@ -337,8 +369,8 @@ class Presentation {
 			'Control+Shift++': () => this.adjustFontSize(element, 1),
 			'Control+Shift+-': () => this.adjustFontSize(element, -1),
 			'Control+Shift+0': () => this.setFontSize(element, this.defaultOptions.fontSize),
-			Home: () => this.goToSlide(0, false),
-			End: () => this.goToSlide(this.slides.length - 1),
+			Home: () => this.goToSlide(1, false),
+			End: () => this.goToSlide(this.slides.length),
 		};
 
 		// aliases
@@ -374,7 +406,7 @@ class Presentation {
 
 		const handleInternalLink = event => {
 			event.preventDefault();
-			const newState = Presentation.getState(event.target.getAttribute('href'));
+			const newState = this.getState(event.target.getAttribute('href'));
 			if (newState) {
 				this.setOptions(newState);
 				this.updateSlidePerState();
@@ -398,7 +430,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	window.presentation = new Presentation(
 		document.body,
-		Presentation.getState(window.location.hash)
+		window.location.hash
 	);
 
 	window.debug = () => {
